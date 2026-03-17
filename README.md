@@ -28,5 +28,17 @@ Everything runs on a 6‑hour schedule or on demand.
 
 ---
 
-## 🧱 Architecture
+1. Scraper (Playwright)
+      ↓
+2. Dedupe Engine
+      ↓
+3. Cosmos DB (store jobs)
+      ↓
+4. Dashboard Generator (creates data.json)
+      ↓
+5. GitHub Pages (dashboard UI)
+
+Meanwhile:
+      ↘
+       GitHub Actions CI/CD → Azure Container Apps (backend deployment)
 
