@@ -1,0 +1,72 @@
+Scoring Rules (Detailed)
+
+1. Seniority (0–20 points)
+
+if re.search(r"\b(principal|staff|architect|lead|senior|sr\.?)\b", text, re.I):
+    score += 20
+elif re.search(r"\b(manager|director)\b", text, re.I):
+    score += 10
+else:
+    score += 0
+
+2. Remote‑Only (0–20 points)
+
+if re.search(r"\b(remote|work\s*from\s*home)\b", text, re.I):
+    score += 20
+elif re.search(r"\b(hybrid|onsite|on-site|in office)\b", text, re.I):
+    score -= 50   # auto‑reject territory
+
+
+3. Compensation Signals (0–15 points)
+
+modern = r"\b(fabric|onelake|medallion|delta lake|synapse|data factory|pyspark|dataops|ci/cd)\b"
+hits = len(re.findall(modern, text, re.I))
+score += min(hits * 3, 15)
+
+4. Modern Tech Stack (0–15 points)
+
+modern = r"\b(fabric|onelake|medallion|delta lake|synapse|data factory|pyspark|dataops|ci/cd)\b"
+hits = len(re.findall(modern, text, re.I))
+score += min(hits * 3, 15)
+
+5. Role Scope & Ownership (0–10 points)
+
+if re.search(r"\b(architect|platform|ownership|strategy|governance|standards)\b", text, re.I):
+    score += 10
+
+
+6. Company Maturity (0–10 points)
+
+if re.search(r"\b(roadmap|mature|enterprise|governance|data team|modernization)\b", text, re.I):
+    score += 10
+elif re.search(r"\b(greenfield|starting|exploring|learning fabric)\b", text, re.I):
+    score -= 10
+
+
+if re.search(r"\b(roadmap|mature|enterprise|governance|data team|modernization)\b", text, re.I):
+    score += 10
+elif re.search(r"\b(greenfield|starting|exploring|learning fabric)\b", text, re.I):
+    score -= 10
+
+7. Red‑Flag Avoidance (0–10 points)
+
+redflags = r"\b(relocation|relocate|onsite|hybrid|wear many hats|limited resources|solo data engineer)\b"
+if re.search(redflags, text, re.I):
+    score -= 20
+else:
+    score += 10
+
+B. Final Score Normalization
+
+score = max(0, min(score, 100))
+
+C. Interpretation
+90–100 → Top‑tier match. Apply immediately.
+
+75–89 → Strong match. Worth reviewing.
+
+60–74 → Maybe. Needs manual review.
+
+<60 → Skip. Not worth your time.
+
+This model will dramatically reduce noise and surface only the roles aligned with your seniority, compensation expectations, and technical depth.
