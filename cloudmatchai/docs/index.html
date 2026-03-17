@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CloudMatchAI Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>CloudMatchAI Dashboard</h1>
+
+<div class="badges">
+    <img src="https://github.com/sdonovan43/CloudMatchAI/actions/workflows/cloudmatchai.yml/badge.svg" alt="CI Status">
+    <img src="https://github.com/sdonovan43/CloudMatchAI/actions/workflows/deploy.yml/badge.svg" alt="Deployment Status">
+</div>
+
+<section>
+    <h2>Latest Scrape</h2>
+    <p id="last-scrape">Loading...</p>
+</section>
+
+<section>
+    <h2>Top Jobs</h2>
+    <ul id="job-list">Loading...</ul>
+</section>
+
+<script>
+    fetch("data.json")
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById("last-scrape").innerText = data.last_scrape;
+
+            const list = document.getElementById("job-list");
+            list.innerHTML = "";
+
+            data.top_jobs.forEach(job => {
+                const li = document.createElement("li");
+                li.innerHTML = `<a href="${job.url}" target="_blank">${job.title}</a> — ${job.company} (${job.score})`;
+                list.appendChild(li);
+            });
+        });
+</script>
+
+</body>
+</html>
