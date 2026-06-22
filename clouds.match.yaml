@@ -1,0 +1,20 @@
+# clouds.match.yaml
+source:
+  adapter: rest_api
+  endpoint: https://cloudprovider-pricing-api.com/v1/providers
+  fields: [name, compute, storage, egress, regions, compliance]
+
+profile:
+  workload: gpu-ml-training
+  budget_monthly_usd: 15000
+  requirements: [SOC2, GDPR]
+  weights:
+    cost: 0.4
+    performance: 0.3
+    compliance: 0.2
+    latency: 0.1
+
+output:
+  storage: cosmos
+  dashboard: true
+  webhook: null
