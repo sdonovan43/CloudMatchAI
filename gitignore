@@ -1,0 +1,18 @@
+# Secrets — never commit these
+.env
+
+# Database & generated outputs
+*.db
+jobs_export.csv
+jobs_viewer.html
+
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Playwright browser binaries (too large for git)
+ms-playwright/

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CloudMatchAI — Job Viewer</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #0f172a; color: #e2e8f0; padding: 24px; }
+  h1 { font-size: 1.5rem; margin-bottom: 4px; color: #38bdf8; }
+  p.sub { color: #94a3b8; font-size: 0.85rem; margin-bottom: 16px; }
+  .toolbar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  input, select { background: #1e293b; border: 1px solid #334155; color: #e2e8f0;
+                   padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; }
+  input { width: 280px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  thead th { background: #1e293b; padding: 10px 12px; text-align: left;
+              color: #94a3b8; font-weight: 600; cursor: pointer; user-select: none; }
+  thead th:hover { color: #38bdf8; }
+  tbody tr { border-bottom: 1px solid #1e293b; }
+  tbody tr:hover { background: #1e293b; }
+  td { padding: 10px 12px; vertical-align: top; }
+  td a { color: #38bdf8; text-decoration: none; }
+  td a:hover { text-decoration: underline; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px;
+            font-size: 0.75rem; font-weight: 700; color: white; }
+  .desc { color: #94a3b8; font-size: 0.8rem; max-width: 340px; }
+  .ts { color: #64748b; font-size: 0.8rem; white-space: nowrap; }
+  #count { color: #94a3b8; font-size: 0.85rem; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<h1>☁️ CloudMatchAI</h1>
+<p class="sub">Generated 2026-06-22 16:30 UTC &nbsp;|&nbsp; 38 total jobs</p>
+
+<div class="toolbar">
+  <input type="text" id="search" placeholder="Search title, company, location..." oninput="filterTable()">
+  <select id="minScore" onchange="filterTable()">
+    <option value="0">All scores</option>
+    <option value="30">Score ≥ 30</option>
+    <option value="50">Score ≥ 50</option>
+    <option value="70">Score ≥ 70</option>
+  </select>
+  <select id="remoteOnly" onchange="filterTable()">
+    <option value="0">All locations</option>
+    <option value="1">Remote only</option>
+  </select>
+</div>
+
+<div id="count"></div>
+
+<table id="jobTable">
+  <thead>
+    <tr>
+      <th onclick="sortTable(0)">Title ↕</th>
+      <th onclick="sortTable(1)">Company ↕</th>
+      <th onclick="sortTable(2)">Location ↕</th>
+      <th onclick="sortTable(3)">Score ↕</th>
+      <th>Snippet</th>
+      <th onclick="sortTable(5)">Date ↕</th>
+    </tr>
+  </thead>
+  <tbody id="tbody">
+    
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/azure-cloud-devops-engineer-at-lightfeather-4430761254" target="_blank">Azure Cloud/DevOps Engineer</a></td>
+          <td>LightFeather</td>
+          <td>Alexandria, VA</td>
+          <td><span class="badge" style="background:#f59e0b">55</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/azure-cloud-engineer-at-lightfeather-4430760230" target="_blank">Azure Cloud Engineer</a></td>
+          <td>LightFeather</td>
+          <td>Alexandria, VA</td>
+          <td><span class="badge" style="background:#f59e0b">45</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-engineer-azure-at-lee-health-4398631212" target="_blank">Cloud Engineer - Azure</a></td>
+          <td>Lee Health</td>
+          <td>Fort Myers, FL</td>
+          <td><span class="badge" style="background:#f59e0b">45</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/azure-devops-engineer-at-infinite-computer-solutions-4422686658" target="_blank">Azure DevOps Engineer</a></td>
+          <td>Infinite Computer Solutions</td>
+          <td>New Jersey, United States</td>
+          <td><span class="badge" style="background:#f59e0b">45</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/azure-cloud-systems-engineer-at-technoyon-india-pvt-ltd-4386538126" target="_blank">Azure Cloud Systems Engineer</a></td>
+          <td>Technoyon India Pvt. Ltd.</td>
+          <td>United States</td>
+          <td><span class="badge" style="background:#f59e0b">45</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/azure-cloud-engineer-at-marchon-partners-4420951969" target="_blank">Azure Cloud Engineer</a></td>
+          <td>Marchon Partners</td>
+          <td>Boston, MA</td>
+          <td><span class="badge" style="background:#f59e0b">45</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/sr-azure-infrastructure-engineer-at-globalpoint-4422426413" target="_blank">Sr. Azure Infrastructure Engineer</a></td>
+          <td>GlobalPoint</td>
+          <td>Virginia, United States</td>
+          <td><span class="badge" style="background:#f59e0b">45</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-azure-server-engineer-houston-tx-at-zedcor-security-solutions-4430007537" target="_blank">Cloud / Azure / Server Engineer - Houston, TX</a></td>
+          <td>Zedcor Security Solutions</td>
+          <td>Houston, TX</td>
+          <td><span class="badge" style="background:#f59e0b">40</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/systems-engineer-azure-cloud-engineer-at-medpace-4332206847" target="_blank">Systems Engineer (Azure Cloud Engineer)</a></td>
+          <td>Medpace</td>
+          <td>Cincinnati, OH</td>
+          <td><span class="badge" style="background:#f59e0b">40</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-infrastructure-engineer-at-bs-a-software-4431194895" target="_blank">Cloud Infrastructure Engineer</a></td>
+          <td>BS&A Software</td>
+          <td>Lansing, MI</td>
+          <td><span class="badge" style="background:#f59e0b">40</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/azure-infrastructure-virtual-desktop-engineer-%E2%80%93-enterprise-technology-infrastructure-at-hines-4430001209" target="_blank">Azure Infrastructure & Virtual Desktop Engineer – Enterprise Technology Infrastructure</a></td>
+          <td>Hines</td>
+          <td>Houston, TX</td>
+          <td><span class="badge" style="background:#f59e0b">40</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-infrastructure-engineer-at-waste-connections-4382591644" target="_blank">Cloud Infrastructure Engineer</a></td>
+          <td>Waste Connections</td>
+          <td>The Woodlands, TX</td>
+          <td><span class="badge" style="background:#f59e0b">40</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/azure-cloud-engineer-at-frp-of-florida-4367912112" target="_blank">Azure Cloud Engineer</a></td>
+          <td>FRP of Florida</td>
+          <td>Orlando, FL</td>
+          <td><span class="badge" style="background:#f59e0b">40</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-engineer-azure-at-core-specialty-insurance-holdings-inc-4429648957" target="_blank">Cloud Engineer - Azure</a></td>
+          <td>Core Specialty Insurance Holdings, Inc.</td>
+          <td>Cincinnati, OH</td>
+          <td><span class="badge" style="background:#f59e0b">40</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-infrastructure-engineer-at-security-risk-advisors-4420936505" target="_blank">Cloud Infrastructure Engineer</a></td>
+          <td>Security Risk Advisors</td>
+          <td>Philadelphia, PA</td>
+          <td><span class="badge" style="background:#f59e0b">40</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/azure-infrastructure-engineer-at-corebridge-financial-4414720805" target="_blank">Azure Infrastructure Engineer</a></td>
+          <td>Corebridge Financial</td>
+          <td>Houston, TX</td>
+          <td><span class="badge" style="background:#f59e0b">40</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-solutions-infrastructure-engineer-at-diversified-energy-company-4426174331" target="_blank">Cloud Solutions Infrastructure Engineer</a></td>
+          <td>Diversified Energy Company</td>
+          <td>Birmingham, AL</td>
+          <td><span class="badge" style="background:#f59e0b">40</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-platform-engineer-ii-at-ufp-industries-4414015756" target="_blank">Cloud Platform Engineer II</a></td>
+          <td>UFP Industries</td>
+          <td>Grand Rapids, MI</td>
+          <td><span class="badge" style="background:#f59e0b">40</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/infrastructure-cloud-engineer-2-at-rogers-corporation-4391473838" target="_blank">Infrastructure Cloud Engineer 2</a></td>
+          <td>Rogers Corporation</td>
+          <td>Chandler, AZ</td>
+          <td><span class="badge" style="background:#f59e0b">40</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/infrastructure-cloud-engineer-at-redwood-logistics-4428712367" target="_blank">Infrastructure Cloud Engineer</a></td>
+          <td>Redwood Logistics</td>
+          <td>Chicago, IL</td>
+          <td><span class="badge" style="background:#f59e0b">40</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-infrastructure-engineer-at-snowrelic-inc-4346213289" target="_blank">Cloud Infrastructure Engineer</a></td>
+          <td>Snowrelic Inc</td>
+          <td>Plano, TX</td>
+          <td><span class="badge" style="background:#f59e0b">40</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/junior-azure-engineer-at-infinity-technology-consulting-inc-4365453762" target="_blank">Junior Azure Engineer</a></td>
+          <td>Infinity Technology Consulting, Inc.</td>
+          <td>Atlanta, GA</td>
+          <td><span class="badge" style="background:#f59e0b">35</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/azure-engineer-at-tricom-technical-services-4427675066" target="_blank">Azure Engineer</a></td>
+          <td>TriCom Technical Services</td>
+          <td>Leawood, KS</td>
+          <td><span class="badge" style="background:#f59e0b">35</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-engineer-at-populous-4409557412" target="_blank">Cloud Engineer</a></td>
+          <td>Populous</td>
+          <td>Houston, TX</td>
+          <td><span class="badge" style="background:#f59e0b">30</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-engineer-at-knitt-4418851021" target="_blank">Cloud Engineer</a></td>
+          <td>KniTT</td>
+          <td>Houston, TX</td>
+          <td><span class="badge" style="background:#f59e0b">30</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/senior-cloud-engineer-at-clayco-4409705006" target="_blank">Senior Cloud Engineer</a></td>
+          <td>Clayco</td>
+          <td>St Louis, MO</td>
+          <td><span class="badge" style="background:#f59e0b">30</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-engineer-at-robert-half-4423393060" target="_blank">Cloud Engineer</a></td>
+          <td>Robert Half</td>
+          <td>Louisville, KY</td>
+          <td><span class="badge" style="background:#f59e0b">30</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/azure-engineer-at-witherite-law-group-4420929646" target="_blank">Azure Engineer</a></td>
+          <td>Witherite Law Group</td>
+          <td>Dallas, TX</td>
+          <td><span class="badge" style="background:#f59e0b">30</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/senior-cloud-engineer-at-flywheel-energy-llc-4422992650" target="_blank">Senior Cloud Engineer</a></td>
+          <td>Flywheel Energy, LLC</td>
+          <td>Oklahoma City, OK</td>
+          <td><span class="badge" style="background:#f59e0b">30</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-engineer-at-exos-4415685381" target="_blank">Cloud Engineer</a></td>
+          <td>EXOS</td>
+          <td>Indianapolis, IN</td>
+          <td><span class="badge" style="background:#f59e0b">30</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/devops-engineer-at-medreview-inc-4399902206" target="_blank">Devops Engineer</a></td>
+          <td>MedReview Inc.</td>
+          <td>Newport Beach, CA</td>
+          <td><span class="badge" style="background:#f59e0b">30</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-engineer-at-protera-4370580054" target="_blank">Cloud Engineer</a></td>
+          <td>Protera</td>
+          <td>United States</td>
+          <td><span class="badge" style="background:#f59e0b">30</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-engineer-at-l-occitane-group-b-corp-4417144713" target="_blank">Cloud Engineer</a></td>
+          <td>L'OCCITANE Group (B Corp)</td>
+          <td>New York, NY</td>
+          <td><span class="badge" style="background:#f59e0b">30</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-engineer-at-techsur-solutions-4423151876" target="_blank">Cloud Engineer</a></td>
+          <td>TechSur Solutions</td>
+          <td>Reston, VA</td>
+          <td><span class="badge" style="background:#f59e0b">30</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-operations-engineer-at-attom-4430343044" target="_blank">Cloud Operations Engineer</a></td>
+          <td>ATTOM</td>
+          <td>Irvine, CA</td>
+          <td><span class="badge" style="background:#f59e0b">30</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/cloud-engineer-at-helic-co-4431723472" target="_blank">Cloud Engineer</a></td>
+          <td>Helic & Co</td>
+          <td>United States</td>
+          <td><span class="badge" style="background:#f59e0b">30</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.indeed.com/viewjob?jk=67b010c8c479e2fd" target="_blank">Unknown</a></td>
+          <td>Unknown</td>
+          <td>Unknown</td>
+          <td><span class="badge" style="background:#6b7280">20</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.linkedin.com/jobs/view/etl-engineer-at-medreview-inc-4401649493" target="_blank">ETL Engineer</a></td>
+          <td>MedReview Inc.</td>
+          <td>New York, NY</td>
+          <td><span class="badge" style="background:#6b7280">20</span></td>
+          <td class="desc"></td>
+          <td class="ts">2026-06-22</td>
+        </tr>
+  </tbody>
+</table>
+
+<script>
+let sortDir = {};
+
+function filterTable() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const minScore = parseInt(document.getElementById('minScore').value);
+  const remoteOnly = document.getElementById('remoteOnly').value === '1';
+  const rows = document.querySelectorAll('#tbody tr');
+  let visible = 0;
+  rows.forEach(row => {
+    const text = row.innerText.toLowerCase();
+    const score = parseInt(row.cells[3].innerText) || 0;
+    const isRemote = text.includes('remote');
+    const show = text.includes(q) && score >= minScore && (!remoteOnly || isRemote);
+    row.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('count').textContent = visible + ' jobs shown';
+}
+
+function sortTable(col) {
+  const tbody = document.getElementById('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  sortDir[col] = !sortDir[col];
+  rows.sort((a, b) => {
+    let av = a.cells[col].innerText.trim();
+    let bv = b.cells[col].innerText.trim();
+    const an = parseFloat(av), bn = parseFloat(bv);
+    if (!isNaN(an) && !isNaN(bn)) return sortDir[col] ? an - bn : bn - an;
+    return sortDir[col] ? av.localeCompare(bv) : bv.localeCompare(av);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+  filterTable();
+}
+
+filterTable();
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+=== CloudMatchAI ===
+
+[*] Initializing storage...
+[*] Running scraper...
+[*] Scraping Indeed...
+    -> 16 jobs found
+[*] Scraping LinkedIn...
+    -> 20 jobs found
+[*] Total scraped: 36 jobs
+
+[+] Saved 1 new unique jobs
+
+=== Top Matches ===
+
+  Score  55 | Azure Cloud/DevOps Engineer @ LightFeather
+           Alexandria, VA
+           https://www.linkedin.com/jobs/view/azure-cloud-devops-engineer-at-lightfeather-4430761254
+
+  Score  45 | Azure Cloud Engineer @ LightFeather
+           Alexandria, VA
+           https://www.linkedin.com/jobs/view/azure-cloud-engineer-at-lightfeather-4430760230
+
+  Score  45 | Cloud Engineer - Azure @ Lee Health
+           Fort Myers, FL
+           https://www.linkedin.com/jobs/view/cloud-engineer-azure-at-lee-health-4398631212
+
+  Score  45 | Azure DevOps Engineer @ Infinite Computer Solutions
+           New Jersey, United States
+           https://www.linkedin.com/jobs/view/azure-devops-engineer-at-infinite-computer-solutions-4422686658
+
+  Score  45 | Azure Cloud Systems Engineer @ Technoyon India Pvt. Ltd.
+           United States
+           https://www.linkedin.com/jobs/view/azure-cloud-systems-engineer-at-technoyon-india-pvt-ltd-4386538126
+
+  Score  45 | Azure Cloud Engineer @ Marchon Partners
+           Boston, MA
+           https://www.linkedin.com/jobs/view/azure-cloud-engineer-at-marchon-partners-4420951969
+
+  Score  45 | Sr. Azure Infrastructure Engineer @ GlobalPoint
+           Virginia, United States
+           https://www.linkedin.com/jobs/view/sr-azure-infrastructure-engineer-at-globalpoint-4422426413
+
+  Score  40 | Cloud / Azure / Server Engineer - Houston, TX @ Zedcor Security Solutions
+           Houston, TX
+           https://www.linkedin.com/jobs/view/cloud-azure-server-engineer-houston-tx-at-zedcor-security-solutions-4430007537
+
+  Score  40 | Systems Engineer (Azure Cloud Engineer) @ Medpace
+           Cincinnati, OH
+           https://www.linkedin.com/jobs/view/systems-engineer-azure-cloud-engineer-at-medpace-4332206847
+
+  Score  40 | Cloud Infrastructure Engineer @ BS&A Software
+           Lansing, MI
+           https://www.linkedin.com/jobs/view/cloud-infrastructure-engineer-at-bs-a-software-4431194895
+
