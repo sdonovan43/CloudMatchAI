@@ -59,6 +59,37 @@ Weighted criteria + GPT‑4o = ranked, explained results.
 ## 🧱 Architecture (Principal‑Level System Map)
 
 ```mermaid
+flowchart TD
+    subgraph Config["YAML Config"]
+        A1["clouds.match.yaml"]
+        A2["test.match.yaml"]
+    end
+
+    subgraph Engine["CloudMatchAI Engine"]
+        B1["config.py<br/>YAML Loader (Pydantic)"]
+        B2["adapters.py<br/>Source Adapters"]
+        B3["scorer.py<br/>LLM Scoring (GPT‑4o)"]
+        B4["dedupe.py<br/>Entity Deduplication"]
+        B5["storage.py<br/>Local Storage"]
+    end
+
+    subgraph CLI["CLI Runner"]
+        C1["cli.py<br/>Fetch → Dedupe → Score → Store"]
+    end
+
+    A1 --> B1
+    A2 --> B1
+    B1 --> B2
+    B2 --> B4
+    B4 --> B3
+    B3 --> B5
+    C1 --> A1
+    C1 --> A2
+    C1 --> Engine
+```
+## 🧭 System Map (High‑Level Flow)
+
+```mermaid
 graph TD
 
     %% ===== Nodes =====
@@ -82,6 +113,10 @@ graph TD
     classDef node fill:#0d1117,stroke:#58a6ff,color:#c9d1d9,stroke-width:1.5px;
     classDef engine fill:#161b22,stroke:#30363d,color:#c9d1d9,stroke-width:1px;
     class Engine engine;
+```
+
+
+ 
 
 
 📂 Repo Layout (v2‑clean, no dead weight)
