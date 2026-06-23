@@ -15,6 +15,54 @@ class BaseAdapter(ABC):
         ...
 
 
+# ============================
+#       GROQ ADAPTER
+# ============================
+
+class GroqAdapter(BaseAdapter):
+    """
+    Adapter for Groq's OpenAI-compatible API.
+    Fetches JSON data from a REST endpoint and normalizes it into a list.
+    """
+
+    def fetch(self) -> list[dict[str, Any]]:
+        endpoint = self.cfg.source.endpoint
+        method = self.cfg.source.method.upper()
+        headers = self.cfg.source.headers or {}
+        params = self.cfg.source.params or {}
+
+        # Inject Groq API key
+        headers["Authorization"] = f"Bearer {self.cfg.llm.api_key}"
+
+        try:
+            if method == "GET":
+                resp = httpx.get(endpoint, headers=headers, params=params, timeout=30)
+            else:
+                resp = httpx.post(endpoint, headers=headers, json=params, timeout=30)
+
+            resp.raise_for_status()
+            data = resp.json()
+
+            # Normalize to list
+            if isinstance(data, list):
+                return data
+
+            if isinstance(data, dict):
+                for v in data.values():
+                    if isinstance(v, list):
+                        return v
+
+            return []
+
+        except Exception as e:
+            print("GROQ ADAPTER ERROR:", e)
+            return []
+
+
+# ============================
+#       REST API ADAPTER
+# ============================
+
 class RestAPIAdapter(BaseAdapter):
     """Generic REST adapter for JSON APIs."""
     def fetch(self) -> list[dict[str, Any]]:
@@ -39,6 +87,10 @@ class RestAPIAdapter(BaseAdapter):
             return []
 
 
+# ============================
+#       STATIC ADAPTER
+# ============================
+
 class StaticAdapter(BaseAdapter):
     """Drop-in adapter for local testing — returns hardcoded sample data."""
     def fetch(self) -> list[dict[str, Any]]:
@@ -52,10 +104,14 @@ class StaticAdapter(BaseAdapter):
         ]
 
 
-# Unified registry — the ONLY one
+# ============================
+#       ADAPTER REGISTRY
+# ============================
+
 ADAPTERS: dict[str, type[BaseAdapter]] = {
     "rest_api": RestAPIAdapter,
     "static": StaticAdapter,
+    "groq": GroqAdapter,   # ← YOU MUST ADD THIS
 }
 
 
@@ -66,4 +122,3 @@ def get_adapter(cfg: SourceConfig) -> BaseAdapter:
             f"Unknown adapter: '{cfg.adapter}'. Available: {list(ADAPTERS)}"
         )
     return cls(cfg)
-
