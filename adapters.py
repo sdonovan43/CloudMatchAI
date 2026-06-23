@@ -26,10 +26,11 @@ class GroqAdapter(BaseAdapter):
     """
 
     def fetch(self) -> list[dict[str, Any]]:
-        endpoint = self.cfg.source.endpoint
-        method = self.cfg.source.method.upper()
-        headers = self.cfg.source.headers or {}
-        params = self.cfg.source.params or {}
+        # FIXED: SourceConfig has endpoint/method/headers/params directly
+        endpoint = self.cfg.endpoint
+        method = self.cfg.method.upper()
+        headers = self.cfg.headers or {}
+        params = self.cfg.params or {}
 
         # Inject Groq API key
         headers["Authorization"] = f"Bearer {self.cfg.llm.api_key}"
@@ -108,17 +109,4 @@ class StaticAdapter(BaseAdapter):
 #       ADAPTER REGISTRY
 # ============================
 
-ADAPTERS: dict[str, type[BaseAdapter]] = {
-    "rest_api": RestAPIAdapter,
-    "static": StaticAdapter,
-    "groq": GroqAdapter,   # ← YOU MUST ADD THIS
-}
-
-
-def get_adapter(cfg: SourceConfig) -> BaseAdapter:
-    cls = ADAPTERS.get(cfg.adapter)
-    if not cls:
-        raise ValueError(
-            f"Unknown adapter: '{cfg.adapter}'. Available: {list(ADAPTERS)}"
-        )
-    return cls(cfg)
+ADAPTERS: dict[str, type
