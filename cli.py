@@ -1,65 +1,55 @@
-# scorer.py
 from __future__ import annotations
-from typing import Any
-from openai import OpenAI
-from config import ProfileConfig
-
-client = OpenAI()
-
-
-def score_candidates(
-    candidates: list[dict[str, Any]],
-    profile: ProfileConfig,
-) -> list[dict[str, Any]]:
-    """Score each candidate using GPT-4o and return sorted results."""
-    results = []
-    for candidate in candidates:
-        score, reasoning = _score_single(candidate, profile)
-        results.append({**candidate, "score": score, "reasoning": reasoning})
-    return sorted(results, key=lambda x: x["score"], reverse=True)
+import argparse
+from adapters import get_adapter
+from config import load_config
+from scorer import Scorer
 
 
-def _score_single(
-    candidate: dict[str, Any],
-    profile: ProfileConfig,
-) -> tuple[float, str]:
-    prompt = _build_prompt(candidate, profile)
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {"role": "system", "content": (
-                "You are a cloud infrastructure analyst. "
-                "Score the candidate 0.0–1.0 against the profile. "
-                "Reply with exactly two lines:\n"
-                "SCORE: <float>\nREASON: <one sentence>"
-            )},
-            {"role": "user", "content": prompt},
-        ],
-        temperature=0.2,
-        max_tokens=80,
-    )
-    return _parse_response(response.choices[0].message.content or "")
+def run(config_path: str):
+    # Load YAML config
+    cfg = load_config(config_path) 
+    print("DEBUG: Using adapter:", cfg.source.adapter)
+    print("DEBUG: Adapter class:", get_adapter(cfg.source))
+    # Instantiate adapter
+    adapter = get_adapter(cfg.source)
+
+    # Fetch data
+    items = adapter.fetch()
+    if not items:
+        print("No data returned from adapter.")
+        return
+
+    # Define weights (could be moved into config later)
+    weights = {
+        "compute": 0.25,
+        "storage": 0.25,
+        "egress": 0.20,
+        "regions": 0.15,
+        "compliance": 0.15,
+    }
+
+    scorer = Scorer(weights, llm_enabled=False)
+
+    print(f"\n=== CloudMatchAI Results for Profile: {cfg.profile.name} ===\n")
+
+    for item in items:
+        result = scorer.score(item, cfg.profile.criteria)
+
+        print(f"Provider: {item.get('name', 'Unknown')}")
+        print(f"Score: {result['score']}")
+        print("Breakdown:")
+        for k, v in result["breakdown"].items():
+            print(f"  - {k}: {v}")
+        print("Explanation:")
+        print(result["explanation"])
+        print("-" * 40)
+
+def main():
+    parser = argparse.ArgumentParser(description="CloudMatchAI v2.0 CLI")
+    parser.add_argument("config", help="Path to YAML config file")
+    config_path = parser.parse_args().config
+    run(config_path)
 
 
-def _build_prompt(candidate: dict[str, Any], profile: ProfileConfig) -> str:
-    weights_str = ", ".join(f"{k}={v}" for k, v in profile.weights.items())
-    return (
-        f"Candidate: {candidate}\n"
-        f"Workload: {profile.workload}\n"
-        f"Budget: ${profile.budget_monthly_usd}/mo\n"
-        f"Requirements: {profile.requirements}\n"
-        f"Weights: {weights_str}"
-    )
-
-
-def _parse_response(text: str) -> tuple[float, str]:
-    score, reasoning = 0.5, "No reasoning returned."
-    for line in text.splitlines():
-        if line.startswith("SCORE:"):
-            try:
-                score = float(line.split(":", 1)[1].strip())
-            except ValueError:
-                pass
-        elif line.startswith("REASON:"):
-            reasoning = line.split(":", 1)[1].strip()
-    return score, reasoning
+if __name__ == "__main__":
+    main()

@@ -1,4 +1,3 @@
-# adapters.py
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any
@@ -16,15 +15,28 @@ class BaseAdapter(ABC):
         ...
 
 
-class RestApiAdapter(BaseAdapter):
+class RestAPIAdapter(BaseAdapter):
+    """Generic REST adapter for JSON APIs."""
     def fetch(self) -> list[dict[str, Any]]:
-        if not self.cfg.endpoint:
-            raise ValueError("RestApiAdapter requires an endpoint.")
-        response = httpx.get(self.cfg.endpoint, timeout=30)
-        response.raise_for_status()
-        data = response.json()
-        # normalize to list
-        return data if isinstance(data, list) else data.get("items", [data])
+        try:
+            response = httpx.get(self.cfg.endpoint, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+
+            # Normalize to list
+            if isinstance(data, list):
+                return data
+
+            if isinstance(data, dict):
+                for v in data.values():
+                    if isinstance(v, list):
+                        return v
+
+            return []
+
+        except Exception as e:
+            print("REST API ERROR:", e)
+            return []
 
 
 class StaticAdapter(BaseAdapter):
@@ -40,15 +52,18 @@ class StaticAdapter(BaseAdapter):
         ]
 
 
-ADAPTER_REGISTRY: dict[str, type[BaseAdapter]] = {
-    "rest_api": RestApiAdapter,
+# Unified registry — the ONLY one
+ADAPTERS: dict[str, type[BaseAdapter]] = {
+    "rest_api": RestAPIAdapter,
     "static": StaticAdapter,
 }
 
 
 def get_adapter(cfg: SourceConfig) -> BaseAdapter:
-    cls = ADAPTER_REGISTRY.get(cfg.adapter)
+    cls = ADAPTERS.get(cfg.adapter)
     if not cls:
-        raise ValueError(f"Unknown adapter: '{cfg.adapter}'. "
-                         f"Available: {list(ADAPTER_REGISTRY)}")
+        raise ValueError(
+            f"Unknown adapter: '{cfg.adapter}'. Available: {list(ADAPTERS)}"
+        )
     return cls(cfg)
+
