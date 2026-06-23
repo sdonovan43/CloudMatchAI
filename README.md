@@ -169,61 +169,93 @@ AWS performs strongly in performance and cost efficiency...
 Swap the YAML → score something else.
 The engine doesn’t care.
 
-🔌 Adapters (The Real Power Move)
+
+## 🔌 Adapters (The Real Power Move)
+
+```
 StaticAdapter
-For testing. Zero dependencies. Zero excuses.
+    • For testing
+    • Zero dependencies
+    • Zero excuses
 
 RestAPIAdapter
-Point it at an API.
-It fetches. You score.
+    • Point it at an API
+    • It fetches
+    • You score
 
 PlaywrightAdapter
-For dynamic sites.
-Use it when the data refuses to sit still.
+    • For dynamic sites
+    • Use it when the data refuses to sit still
 
 Write your own
-One class.
-One method.
-Infinite possibilities.
+    • One class
+    • One method
+    • Infinite possibilities
+```
 
-🧠 Scoring Engine (LLM‑backed, not LLM‑bloated)
+## 🧠 Scoring Engine (LLM‑backed, not LLM‑bloated)
+
+```
 scorer.py handles:
 
-weighted scoring
+    • Weighted scoring
+    • Structured breakdowns
+    • LLM‑generated explanations
+    • Consistent ranking
 
-structured breakdowns
+Design philosophy:
+    • Intentionally small
+    • Easy to tweak
+    • No machete required
+```
 
-LLM‑generated explanations
+## 🗂️ Legacy v1 (Quarantined, but preserved)
 
-consistent ranking
-
-It’s intentionally small.
-If you want to tweak the logic, you won’t need a machete.
-
-🗂️ Legacy v1 (Quarantined, but preserved)
-Everything from the old job‑scraper era lives in:
-
-Code
+```
 legacy_v1/
-It’s not loaded.
-It’s not imported.
-It’s not part of v2.
-It’s just there in case you ever want to remember how chaotic things used to be.
+    • Entire v1 job‑scraper system
+    • Not loaded
+    • Not imported
+    • Not part of v2 runtime
+    • Kept only for historical reference
+```
 
-🤝 Contributing
-If you want to add:
+Everything from the chaotic v1 era lives here — safely isolated where it can’t interfere with the v2 engine.
 
-new adapters
 
-new scoring profiles
+## 🤝 Contributing
 
-better docs
+```
+Want to extend CloudMatchAI?
 
-performance improvements
+    • Add new adapters
+    • Create new scoring profiles
+    • Improve documentation
+    • Enhance performance
+    • Tighten architecture
 
-…go for it.
-The engine is built to be extended.
+Design principles:
+    • Small surface area
+    • Clear boundaries
+    • Easy to extend
+    • No unnecessary complexity
+```
 
-📜 License
-MIT.
-Do whatever you want — just don’t blame me if you point it at tequila brands and start a bar fight.
+Pull requests welcome — just keep it sharp.
+
+
+## 📜 License
+
+```
+MIT License
+
+    • Free to use
+    • Free to modify
+    • Free to distribute
+    • No warranty
+    • No liability
+
+In short:
+    • Do whatever you want
+    • Just don’t blame me if you aim this at tequila brands and start a bar fight
+```
