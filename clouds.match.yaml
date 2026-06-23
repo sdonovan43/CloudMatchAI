@@ -1,16 +1,16 @@
 source:
   adapter: groq
-  endpoint: https://api.github.com/users
+  endpoint: https://api.groq.com/openai/v1/chat/completions
 
 profile:
   name: cloud-provider-eval
   description: Evaluate cloud providers using weighted criteria
   criteria:
-    compute: high
-    storage: medium
-    egress: medium
-    regions: 25
-    compliance: ["SOC2", "GDPR"]
+    compute: 0.25
+    storage: 0.25
+    egress: 0.20
+    regions: 0.15
+    compliance: 0.15
 
 llm:
   provider: groq

@@ -22,36 +22,47 @@ class BaseAdapter(ABC):
 class GroqAdapter(BaseAdapter):
     """
     Adapter for Groq's OpenAI-compatible API.
-    Fetches JSON data from a REST endpoint and normalizes it into a list.
+    Sends a minimal chat request and expects the model
+    to return a JSON list of entities.
     """
 
     def fetch(self) -> list[dict[str, Any]]:
-        # FIXED: SourceConfig exposes endpoint/method/headers/params directly
         endpoint = self.cfg.endpoint
-        method = self.cfg.method.upper()
-        headers = self.cfg.headers or {}
-        params = self.cfg.params or {}
 
-        # Inject Groq API key
-        headers["Authorization"] = f"Bearer {self.cfg.llm.api_key}"
+        headers = {
+            "Authorization": f"Bearer {self.cfg.llm.api_key}",
+            "Content-Type": "application/json",
+        }
+
+        # Minimal Groq request — model must return a JSON list
+        payload = {
+            "model": self.cfg.llm.model,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "Return a JSON list of entities to score."
+                }
+            ],
+            "temperature": 0.0,
+        }
 
         try:
-            if method == "GET":
-                resp = httpx.get(endpoint, headers=headers, params=params, timeout=30)
-            else:
-                resp = httpx.post(endpoint, headers=headers, json=params, timeout=30)
-
+            resp = httpx.post(endpoint, headers=headers, json=payload, timeout=30)
             resp.raise_for_status()
             data = resp.json()
 
-            # Normalize to list
+            # If Groq returns a raw list
             if isinstance(data, list):
                 return data
 
+            # If Groq returns OpenAI-style structure
             if isinstance(data, dict):
-                for v in data.values():
-                    if isinstance(v, list):
-                        return v
+                try:
+                    content = data["choices"][0]["message"]["content"]
+                    # Parse the content as JSON
+                    return httpx.Response.json(httpx.Response(200, text=content))
+                except Exception:
+                    pass
 
             return []
 
