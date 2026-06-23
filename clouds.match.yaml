@@ -1,5 +1,5 @@
 source:
-  adapter: rest_api
+  adapter: groq
   endpoint: https://api.github.com/users
 
 profile:
@@ -11,3 +11,9 @@ profile:
     egress: medium
     regions: 25
     compliance: ["SOC2", "GDPR"]
+
+llm:
+  provider: groq
+  endpoint: https://api.groq.com/openai/v1
+  model: llama3-70b-8192
+  api_key: ${GROQ_API_KEY}

@@ -1,183 +1,181 @@
 from __future__ import annotations
-from typing import Any, Dict, List
-import math
-import openai
+from typing import Any
+import httpx
 
 
-class Scorer:
+# ============================
+#   UNIFIED LLM PROVIDER LAYER
+# ============================
+
+class BaseLLMProvider:
+    """Abstract interface all providers must follow."""
+    def __init__(self, cfg):
+        self.cfg = cfg
+
+    def chat(self, messages: list[dict]) -> str:
+        raise NotImplementedError
+
+
+# ----------------------------
+#   OpenAI Provider
+# ----------------------------
+
+class OpenAIProvider(BaseLLMProvider):
+    def chat(self, messages: list[dict]) -> str:
+        resp = httpx.post(
+            f"{self.cfg.llm.endpoint}/chat/completions",
+            headers={"Authorization": f"Bearer {self.cfg.llm.api_key}"},
+            json={
+                "model": self.cfg.llm.model,
+                "messages": messages,
+                "temperature": 0.0,
+            },
+            timeout=30,
+        )
+        resp.raise_for_status()
+        return resp.json()["choices"][0]["message"]["content"]
+
+
+# ----------------------------
+#   Groq Provider
+# ----------------------------
+
+class GroqProvider(BaseLLMProvider):
+    def chat(self, messages: list[dict]) -> str:
+        resp = httpx.post(
+            f"{self.cfg.llm.endpoint}/chat/completions",
+            headers={"Authorization": f"Bearer {self.cfg.llm.api_key}"},
+            json={
+                "model": self.cfg.llm.model,
+                "messages": messages,
+                "temperature": 0.0,
+            },
+            timeout=30,
+        )
+        resp.raise_for_status()
+        return resp.json()["choices"][0]["message"]["content"]
+
+
+# ----------------------------
+#   Azure OpenAI Provider
+# ----------------------------
+
+class AzureOpenAIProvider(BaseLLMProvider):
+    def chat(self, messages: list[dict]) -> str:
+        resp = httpx.post(
+            f"{self.cfg.llm.endpoint}/openai/deployments/{self.cfg.llm.model}/chat/completions?api-version=2024-02-01",
+            headers={"api-key": self.cfg.llm.api_key},
+            json={
+                "messages": messages,
+                "temperature": 0.0,
+            },
+            timeout=30,
+        )
+        resp.raise_for_status()
+        return resp.json()["choices"][0]["message"]["content"]
+
+
+# ----------------------------
+#   Local Ollama Provider
+# ----------------------------
+
+class OllamaProvider(BaseLLMProvider):
+    def chat(self, messages: list[dict]) -> str:
+        resp = httpx.post(
+            f"{self.cfg.llm.endpoint}/chat",
+            json={
+                "model": self.cfg.llm.model,
+                "messages": messages,
+            },
+            timeout=30,
+        )
+        resp.raise_for_status()
+        return resp.json()["message"]["content"]
+
+
+# ----------------------------
+#   Provider Router
+# ----------------------------
+
+LLM_PROVIDERS = {
+    "openai": OpenAIProvider,
+    "groq": GroqProvider,
+    "azure": AzureOpenAIProvider,
+    "ollama": OllamaProvider,
+}
+
+def get_llm_provider(cfg):
+    provider_name = cfg.llm.provider.lower()
+    cls = LLM_PROVIDERS.get(provider_name)
+    if not cls:
+        raise ValueError(
+            f"Unknown LLM provider '{provider_name}'. "
+            f"Available: {list(LLM_PROVIDERS)}"
+        )
+    return cls(cfg)
+
+
+# ============================
+#       SCORING ENGINE
+# ============================
+
+def score_entities(cfg, entities: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """
-    CloudMatchAI v2.0 scoring engine.
-    Combines deterministic weighted scoring + optional LLM scoring.
-    Produces:
-        - numeric score (0–100)
-        - explanation
-        - per-field breakdown
+    Applies weighted scoring + LLM explanation.
+    Returns ranked list of entities with breakdown + explanation.
     """
 
-    def __init__(self, weights: Dict[str, float], llm_enabled: bool = False):
-        """
-        weights example:
-        {
-            "compute": 0.25,
-            "storage": 0.25,
-            "egress": 0.20,
-            "regions": 0.15,
-            "compliance": 0.15
-        }
-        """
-        self.weights = weights
-        self.llm_enabled = llm_enabled
+    criteria = cfg.profile.criteria
+    provider = get_llm_provider(cfg)
 
-    # ----------------------------------------------------------------------
-    # Public API
-    # ----------------------------------------------------------------------
+    results = []
 
-    def score(self, item: Dict[str, Any], criteria: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Returns:
-        {
-            "score": float,
-            "breakdown": { field: float },
-            "explanation": str
-        }
-        """
-
+    for entity in entities:
+        # ----------------------------
+        #   Weighted numeric scoring
+        # ----------------------------
         breakdown = {}
-        total = 0.0
-        weight_sum = sum(self.weights.values())
+        total_score = 0.0
 
-        for key, weight in self.weights.items():
-            expected = criteria.get(key)
-            actual = item.get(key)
+        for key, weight in criteria.items():
+            raw_value = entity.get(key)
 
-            if expected is None:
-                breakdown[key] = 0.0
-                continue
-
-            if isinstance(expected, str):
-                s = self._score_category(expected, actual)
-
-            elif isinstance(expected, (int, float)):
-                s = self._score_numeric(expected, actual)
-
-            elif isinstance(expected, list):
-                s = self._score_list(expected, actual)
-
+            # Normalize numeric-ish values
+            if isinstance(raw_value, (int, float)):
+                score = float(raw_value)
+            elif isinstance(raw_value, str):
+                # crude normalization for now
+                mapping = {"low": 0.3, "medium": 0.6, "high": 0.9}
+                score = mapping.get(raw_value.lower(), 0.5)
             else:
-                s = 0.0
+                score = 0.5
 
-            breakdown[key] = round(s * 100, 2)
-            total += s * weight
+            breakdown[key] = score
+            total_score += score * weight
 
-        final_score = round((total / weight_sum) * 100, 2)
-
-        explanation = (
-            self._llm_explanation(item, criteria, breakdown, final_score)
-            if self.llm_enabled
-            else self._deterministic_explanation(item, breakdown, final_score)
+        # ----------------------------
+        #   LLM Explanation
+        # ----------------------------
+        prompt = (
+            "You are a scoring engine. "
+            "Given the following entity and its weighted scoring breakdown, "
+            "explain the score in 3–5 sentences.\n\n"
+            f"Entity: {entity}\n"
+            f"Breakdown: {breakdown}\n"
+            f"Final Score: {total_score:.2f}"
         )
 
-        return {
-            "score": final_score,
+        explanation = provider.chat([
+            {"role": "system", "content": "You are a precise scoring analyst."},
+            {"role": "user", "content": prompt},
+        ])
+
+        results.append({
+            "entity": entity,
+            "score": round(total_score, 4),
             "breakdown": breakdown,
             "explanation": explanation,
-        }
+        })
 
-    # ----------------------------------------------------------------------
-    # Deterministic scoring helpers
-    # ----------------------------------------------------------------------
-
-    def _score_category(self, expected: str, actual: Any) -> float:
-        """
-        high / medium / low → 1.0 / 0.6 / 0.3
-        """
-        if not isinstance(actual, str):
-            return 0.0
-
-        scale = {"high": 1.0, "medium": 0.6, "low": 0.3}
-        return scale.get(actual.lower(), 0.0)
-
-    def _score_numeric(self, expected: float, actual: Any) -> float:
-        """
-        Numeric scoring: closer is better.
-        Perfect match = 1.0
-        """
-        if not isinstance(actual, (int, float)):
-            return 0.0
-
-        if expected == 0:
-            return 1.0 if actual == 0 else 0.0
-
-        diff = abs(expected - actual)
-        return max(0.0, 1.0 - (diff / expected))
-
-    def _score_list(self, expected: List[Any], actual: Any) -> float:
-        """
-        List scoring: fraction of expected items present.
-        """
-        if not isinstance(actual, list):
-            return 0.0
-
-        if not expected:
-            return 1.0
-
-        matches = sum(1 for x in expected if x in actual)
-        return matches / len(expected)
-
-    # ----------------------------------------------------------------------
-    # Explanation generation
-    # ----------------------------------------------------------------------
-
-    def _deterministic_explanation(
-        self,
-        item: Dict[str, Any],
-        breakdown: Dict[str, float],
-        final_score: float,
-    ) -> str:
-        """
-        Human-readable explanation without LLM.
-        """
-        lines = [f"Final score: {final_score}"]
-
-        for k, v in breakdown.items():
-            lines.append(f"- {k}: {v}")
-
-        return "\n".join(lines)
-
-    def _llm_explanation(
-        self,
-        item: Dict[str, Any],
-        criteria: Dict[str, Any],
-        breakdown: Dict[str, float],
-        final_score: float,
-    ) -> str:
-        """
-        Optional LLM explanation.
-        """
-        prompt = f"""
-You are CloudMatchAI. Explain the scoring of this item.
-
-Item:
-{item}
-
-Criteria:
-{criteria}
-
-Breakdown:
-{breakdown}
-
-Final Score: {final_score}
-
-Write a concise explanation.
-"""
-
-        try:
-            response = openai.ChatCompletion.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=200,
-            )
-            return response.choices[0].message["content"].strip()
-
-        except Exception as e:
-            return f"(LLM explanation unavailable: {e})"
+    # Sort descending
+    return sorted(results, key=lambda r: r["score"], reverse=True)
