@@ -2,16 +2,15 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any
 import httpx
-from config import SourceConfig
+from config import Config  # root config, not SourceConfig
 
 
 class BaseAdapter(ABC):
-    def __init__(self, cfg: SourceConfig):
+    def __init__(self, cfg: Config):
         self.cfg = cfg
 
     @abstractmethod
     def fetch(self) -> list[dict[str, Any]]:
-        """Return a list of candidate records."""
         ...
 
 
@@ -22,19 +21,16 @@ class BaseAdapter(ABC):
 class GroqAdapter(BaseAdapter):
     """
     Adapter for Groq's OpenAI-compatible API.
-    Sends a minimal chat request and expects the model
-    to return a JSON list of entities.
     """
 
     def fetch(self) -> list[dict[str, Any]]:
-        endpoint = self.cfg.endpoint
+        endpoint = self.cfg.source.endpoint
 
         headers = {
             "Authorization": f"Bearer {self.cfg.llm.api_key}",
             "Content-Type": "application/json",
         }
 
-        # Minimal Groq request — model must return a JSON list
         payload = {
             "model": self.cfg.llm.model,
             "messages": [
@@ -59,7 +55,6 @@ class GroqAdapter(BaseAdapter):
             if isinstance(data, dict):
                 try:
                     content = data["choices"][0]["message"]["content"]
-                    # Parse the content as JSON
                     return httpx.Response.json(httpx.Response(200, text=content))
                 except Exception:
                     pass
@@ -76,14 +71,12 @@ class GroqAdapter(BaseAdapter):
 # ============================
 
 class RestAPIAdapter(BaseAdapter):
-    """Generic REST adapter for JSON APIs."""
     def fetch(self) -> list[dict[str, Any]]:
         try:
-            response = httpx.get(self.cfg.endpoint, timeout=10)
-            response.raise_for_status()
-            data = response.json()
+            resp = httpx.get(self.cfg.source.endpoint, timeout=10)
+            resp.raise_for_status()
+            data = resp.json()
 
-            # Normalize to list
             if isinstance(data, list):
                 return data
 
@@ -104,7 +97,6 @@ class RestAPIAdapter(BaseAdapter):
 # ============================
 
 class StaticAdapter(BaseAdapter):
-    """Drop-in adapter for local testing — returns hardcoded sample data."""
     def fetch(self) -> list[dict[str, Any]]:
         return [
             {"name": "AWS", "compute": "high", "storage": "high",
@@ -120,17 +112,15 @@ class StaticAdapter(BaseAdapter):
 #       ADAPTER REGISTRY
 # ============================
 
-ADAPTERS: dict[str, type[BaseAdapter]] = {
+ADAPTERS = {
     "rest_api": RestAPIAdapter,
     "static": StaticAdapter,
     "groq": GroqAdapter,
 }
 
 
-def get_adapter(cfg: SourceConfig) -> BaseAdapter:
-    cls = ADAPTERS.get(cfg.adapter)
+def get_adapter(cfg: Config):
+    cls = ADAPTERS.get(cfg.source.adapter)
     if not cls:
-        raise ValueError(
-            f"Unknown adapter: '{cfg.adapter}'. Available: {list(ADAPTERS)}"
-        )
+        raise ValueError(f"Unknown adapter: {cfg.source.adapter}")
     return cls(cfg)

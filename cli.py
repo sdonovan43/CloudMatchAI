@@ -10,10 +10,12 @@ def run(config_path: str):
     cfg = load_config(config_path)
 
     print("DEBUG: Using adapter:", cfg.source.adapter)
-    print("DEBUG: Adapter class:", get_adapter(cfg.source))
+    print("DEBUG: Adapter class:", get_adapter(cfg))
+
 
     # Instantiate adapter
-    adapter = get_adapter(cfg.source)
+    adapter = get_adapter(cfg)
+
 
     # Fetch data
     items = adapter.fetch()
