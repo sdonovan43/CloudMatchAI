@@ -120,7 +120,7 @@ graph TD
 
 
 📂 Repo Layout (v2‑clean, no dead weight)
-Code
+```
 CloudMatchAI/
 │
 ├── adapters.py          # pluggable data sources
@@ -135,6 +135,7 @@ CloudMatchAI/
 ├── legacy_v1/           # entire v1 system quarantined
 ├── docs/                # optional docs
 └── logs/                # runtime logs
+```
 If it’s not part of the v2 engine, it lives in legacy_v1/ where it can’t hurt anyone.
 
 
