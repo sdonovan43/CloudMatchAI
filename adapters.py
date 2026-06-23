@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any
 import httpx
-from config import RootConfig  # correct root config
+from config import RootConfig
 
 
 class BaseAdapter(ABC):
@@ -99,6 +99,46 @@ class RestAPIAdapter(BaseAdapter):
 class StaticAdapter(BaseAdapter):
     def fetch(self) -> list[dict[str, Any]]:
         return [
-            {"name": "AWS", "compute": "high", "storage": "high",
-             "egress": "high", "regions": 30, "compliance": ["SOC2", "GDPR"]},
-            {"name": "Azure", "compute
+            {
+                "name": "AWS",
+                "compute": "high",
+                "storage": "high",
+                "egress": "high",
+                "regions": 30,
+                "compliance": ["SOC2", "GDPR"]
+            },
+            {
+                "name": "Azure",
+                "compute": "high",
+                "storage": "medium",
+                "egress": "medium",
+                "regions": 28,
+                "compliance": ["SOC2", "GDPR"]
+            },
+            {
+                "name": "GCP",
+                "compute": "medium",
+                "storage": "medium",
+                "egress": "low",
+                "regions": 25,
+                "compliance": ["SOC2"]
+            },
+        ]
+
+
+# ============================
+#       ADAPTER REGISTRY
+# ============================
+
+ADAPTERS = {
+    "rest_api": RestAPIAdapter,
+    "static": StaticAdapter,
+    "groq": GroqAdapter,
+}
+
+
+def get_adapter(cfg: RootConfig):
+    cls = ADAPTERS.get(cfg.source.adapter)
+    if not cls:
+        raise ValueError(f"Unknown adapter: {cfg.source.adapter}")
+    return cls(cfg)
