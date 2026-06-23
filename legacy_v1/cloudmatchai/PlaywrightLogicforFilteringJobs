@@ -1,0 +1,77 @@
+PART 2 — Playwright Logic for Filtering Jobs
+
+Navigate & Scroll LinkedIn Jobs
+
+await page.goto("https://www.linkedin.com/jobs")
+await page.wait_for_load_state("networkidle")
+
+# Scroll to load more jobs
+for _ in range(10):
+    await page.mouse.wheel(0, 2000)
+    await page.wait_for_timeout(800)
+
+    2. Select All Job Cards
+
+    job_cards = await page.locator("ul.jobs-search__results-list li").all()
+
+Extract Job Details From Each Card
+
+jobs = []
+
+for card in job_cards:
+    title = await card.locator("h3").inner_text()
+    company = await card.locator("h4").inner_text()
+    location = await card.locator(".job-search-card__location").inner_text()
+    url = await card.locator("a").get_attribute("href")
+
+    # Click to load description
+    await card.click()
+    await page.wait_for_timeout(500)
+
+    description = await page.locator(".jobs-description-content__text").inner_text()
+
+    jobs.append({
+        "title": title,
+        "company": company,
+        "location": location,
+        "url": url,
+        "description": description
+    })
+
+Apply Regex Filters (Reject/Accept)
+
+import re
+
+def matches_any(text, patterns):
+    return any(re.search(p, text, re.IGNORECASE) for p in patterns)
+
+reject_patterns = [
+    ONSITE_REGEX,
+    LOWBALL_REGEX,
+    LOW_SENIORITY_REGEX,
+    IMMATURE_TECH_REGEX,
+    CULTURE_RED_FLAGS_REGEX
+]
+
+accept_patterns = [
+    SENIORITY_ACCEPT_REGEX,
+    TECH_ACCEPT_REGEX
+]
+
+filtered_jobs = []
+
+for job in jobs:
+    text = f"{job['title']} {job['location']} {job['description']}"
+
+    # Reject if ANY reject pattern matches
+    if matches_any(text, reject_patterns):
+        continue
+
+    # Accept only if at least ONE accept pattern matches
+    if not matches_any(text, accept_patterns):
+        continue
+
+    filtered_jobs.append(job)
+
+Return Clean Structured Results
+return filtered_jobs

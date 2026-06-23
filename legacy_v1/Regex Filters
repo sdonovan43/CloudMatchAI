@@ -1,0 +1,26 @@
+A. Reject Onsite / Hybrid / Relocation Roles
+
+\b(onsite|on-site|hybrid|in[-\s]?office|must\s+be\s+onsite|local\s+candidates|relocation\s+required|relocate\s+at\s+own\s+expense|commute)\b
+
+Reject Lowball Compensation Language
+
+\b(competitive\s+pay|market\s+rate|DOE|commensurate\s+with\s+experience|budget\s+is\s+limited|entry\s+range)\b
+
+Reject Low‑Seniority Titles
+
+\b(junior|jr\.?|mid[-\s]?level|analyst|bi\s+developer|power\s*bi\s+developer|data\s+specialist|support\s+engineer)\b
+
+Reject Immature Tech Stack
+
+\b(legacy\s+ssis|on[-\s]?prem\s+only|no\s+cloud\s+strategy|exploring\s+azure|learning\s+fabric|greenfield\s+cloud\s+initiative|no\s+timeline)\b
+
+Reject Red‑Flag Culture Language
+
+\b(wear\s+many\s+hats|fast[-\s]?paced\s+startup|limited\s+resources|solo\s+data\s+engineer|no\s+defined\s+roadmap)\b
+
+Accept High‑Seniority Titles
+
+\b(principal|senior|sr\.?|lead|staff|architect|head\s+of|director)\b
+
+Accept Modern Tech Stack
+\b(fabric|onelake|medallion|delta\s+lake|azure\s+data\s+factory|synapse|pyspark|dataops|ci[-/]cd)\b

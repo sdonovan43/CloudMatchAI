@@ -1,0 +1,6 @@
+profile:
+  adapter: static
+  criteria:
+    cost: 0.4
+    performance: 0.4
+    support: 0.2

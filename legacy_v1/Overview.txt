@@ -1,0 +1,68 @@
+CloudMatchAI Job Scraper – Engine & Code Overview
+Core scraper:
+
+File: scraper.py
+
+Uses Playwright to scrape LinkedIn Jobs, extract title/company/location/URL/description, apply regex filters, and score each job (0–100).
+
+Regex filters:
+
+Built into scraper.py (or a separate filters.py if you split it).
+
+Rejects: onsite/hybrid/relocation, lowball language, low‑seniority titles, immature tech, bad culture.
+
+Accepts: senior/principal/architect roles, modern Azure/Fabric stack.
+
+Scoring model:
+
+Function: score_job(text) in scraper.py.
+
+Weights: seniority, remote‑only, comp signals, modern tech, scope/ownership, company maturity, red‑flag avoidance.
+
+Produces a 0–100 score per job.
+
+Storage layer (unified):
+
+File: storage.py.
+
+Backends: SQLite (local) and Cosmos DB (cloud), switched via STORAGE_BACKEND env var.
+
+Public API: init_storage(), save_job(job), get_top_jobs(limit).
+
+SQLite implementation:
+
+Inside storage.py.
+
+Local file: jobs.db.
+
+Table: jobs (title, company, location, url, score, description, scraped_at).
+
+Cosmos DB implementation:
+
+Inside storage.py.
+
+DB: CloudMatchAI, Container: Jobs, partition key /company.
+
+Uses URL hash as id for upsert and dedupe.
+
+Deduplication engine:
+
+File: dedupe.py.
+
+Functions:
+
+normalize_title(title) – strips fluff like “Sr.”, “Lead”, punctuation.
+
+hash_url(url) – SHA‑256 hash for stable ID.
+
+is_duplicate(job) – checks URL hash + normalized title + company.
+
+dedupe_job(job) – returns True if job should be saved.
+
+Virtual environment & tooling:
+
+requirements.txt – Playwright, requests, bs4, dotenv, etc.
+
+virtualenv_setup.sh – creates/activates env, installs deps, runs playwright install.
+
+Makefile – targets: install, scrape, clean, reset, lint, format.
