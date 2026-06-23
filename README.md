@@ -54,14 +54,11 @@ One class = one data source.
 Weighted criteria + GPT‑4o = ranked, explained results.
 
 ### **CLI runs the whole thing**
-```bash
-python cli.py <profile.yaml>
-That’s it.
-No flags.
-No drama.
+---
 
-🧱 Architecture (Principal‑Level System Map)
-mermaid
+## 🧱 Architecture (Principal‑Level System Map)
+
+```mermaid
 graph TD
 
     %% ===== Nodes =====
@@ -85,9 +82,7 @@ graph TD
     classDef node fill:#0d1117,stroke:#58a6ff,color:#c9d1d9,stroke-width:1.5px;
     classDef engine fill:#161b22,stroke:#30363d,color:#c9d1d9,stroke-width:1px;
     class Engine engine;
-Everything is explicit.
-Everything is traceable.
-Everything is replaceable.
+
 
 📂 Repo Layout (v2‑clean, no dead weight)
 Code
