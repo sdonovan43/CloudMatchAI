@@ -1,6 +1,6 @@
 ⚡ CloudMatchAI v2
 A precision-built, YAML‑driven scoring engine for anything worth ranking.
-CloudMatchAI v2 is the clean reboot — a modular, adapter‑based engine that takes structured input, applies weighted logic, and lets an LLM do the heavy lifting on evaluation.
+CloudMatchAI v2 is a clean reboot — a modular, adapter‑based engine that takes structured input, applies weighted logic, and lets an LLM do the heavy lifting on evaluation.
 It’s lean. It’s sharp. It’s not here to hold your hand.
 
 If v1 was a job scraper with opinions,
@@ -41,7 +41,8 @@ CLI runs the whole thing
 Code
 python cli.py <profile.yaml>
 That’s it.
-No flags. No 14‑step onboarding ritual.
+No flags.
+No drama.
 
 🧱 Architecture (The 10‑second mental model)
 Code
@@ -98,7 +99,7 @@ It does.
 ▶️ Run It
 Code
 python cli.py test.match.yaml
-You’ll get output like:
+Example output:
 
 Code
 Provider: AWS
