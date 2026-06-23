@@ -1,20 +1,5 @@
-CLI runs the whole thing
-…got swallowed by the chat formatting.
-
-That’s why you never got the full README.
-That’s why GitHub has nothing to render.
-That’s why your file ends early.
-
-So let’s fix this cleanly.
-
-✅ Here is the FULL README.md again — in ONE SINGLE BLOCK — with ALL code fences properly closed
-Paste this into your blank README.md exactly as-is.
-This time it will not cut off.
-
-📄 FULL README.md — COPY EVERYTHING BELOW
-markdown
 # ⚡ CloudMatchAI v2
-A precision-built, YAML‑driven scoring engine for anything worth ranking.
+A precision‑built, YAML‑driven scoring engine for anything worth ranking.
 
 CloudMatchAI v2 is a clean reboot — a modular, adapter‑based engine that takes structured input, applies weighted logic, and lets an LLM do the heavy lifting on evaluation.  
 It’s lean. It’s sharp. It’s not here to hold your hand.
@@ -40,20 +25,33 @@ No rewrites. No drama.
 
 ---
 
+## ⚡ Quick Start
+
+```
+git clone https://github.com/sdonovan43/CloudMatchAI
+cd CloudMatchAI
+pip install -r requirements.txt
+python cli.py test.match.yaml
+```
+
+If you see ranked output → the engine is alive.
+
+---
+
 ## 🧩 Core Concepts (No BS)
 
 ### **YAML is the source of truth**  
-Profiles, criteria, adapters — all defined in `.yaml`.  
-You don’t touch Python unless you want to.
+Profiles, criteria, adapters — all defined in `.yaml`.
 
 ### **Adapters do the fetching**  
-Static, REST, Playwright — or whatever you write next.  
-One class = one data source.
+Static, REST, Playwright — or whatever you write next.
 
 ### **LLM does the scoring**  
 Weighted criteria + GPT‑4o = ranked, explained results.
 
-### **CLI runs the whole thing**
+### **CLI runs the whole thing**  
+One command. Full pipeline.
+
 ---
 
 ## 🧱 Architecture (Principal‑Level System Map)
@@ -87,6 +85,9 @@ flowchart TD
     C1 --> A2
     C1 --> Engine
 ```
+
+---
+
 ## 🧭 System Map (High‑Level Flow)
 
 ```mermaid
@@ -115,11 +116,10 @@ graph TD
     class Engine engine;
 ```
 
+---
 
- 
+## 📂 Repo Layout (v2‑clean, no dead weight)
 
-
-📂 Repo Layout (v2‑clean, no dead weight)
 ```
 CloudMatchAI/
 │
@@ -136,26 +136,50 @@ CloudMatchAI/
 ├── docs/                # optional docs
 └── logs/                # runtime logs
 ```
-If it’s not part of the v2 engine, it lives in legacy_v1/ where it can’t hurt anyone.
 
+If it’s not part of the v2 engine, it lives in `legacy_v1/` where it can’t hurt anyone.
 
-📝 Example Profile (test.match.yaml)
-yaml
+---
+
+## 🧬 Profiles (How You Shape the Engine)
+
+```
+A profile defines:
+    • Which adapter to use
+    • What to fetch
+    • What criteria matter
+    • How heavily each criterion is weighted
+
+Change the YAML → change the scoring universe.
+```
+
+---
+
+## 📝 Example Profile (test.match.yaml)
+
+```
 profile:
   adapter: static
   criteria:
     cost: 0.4
     performance: 0.4
     support: 0.2
-This is the “does the engine even run” profile.
+```
+
+This is the “does the engine even run” profile.  
 It does.
 
-▶️ Run It
-bash
+---
+
+## ▶️ Run It
+
+```
 python cli.py test.match.yaml
+```
+
 Example output:
 
-Code
+```
 Provider: AWS
 Score: 0.87
 Breakdown:
@@ -165,10 +189,12 @@ Breakdown:
 
 Explanation:
 AWS performs strongly in performance and cost efficiency...
-----------------------------------------
-Swap the YAML → score something else.
+```
+
+Swap the YAML → score something else.  
 The engine doesn’t care.
 
+---
 
 ## 🔌 Adapters (The Real Power Move)
 
@@ -193,6 +219,8 @@ Write your own
     • Infinite possibilities
 ```
 
+---
+
 ## 🧠 Scoring Engine (LLM‑backed, not LLM‑bloated)
 
 ```
@@ -209,17 +237,19 @@ Design philosophy:
     • No machete required
 ```
 
-## ⚡ Quick Start
+---
+
+## 🧠 Design Philosophy
 
 ```
-git clone https://github.com/sdonovan43/CloudMatchAI
-cd CloudMatchAI
-pip install -r requirements.txt
-python cli.py test.match.yaml
+• YAML defines behavior — Python executes it  
+• Small surface area > sprawling frameworks  
+• Adapters over conditionals  
+• Deterministic flow, LLM‑powered scoring  
+• No magic, no hidden state, no surprises  
 ```
 
-If you see ranked output → the engine is alive.
-
+---
 
 ## 🗺️ Roadmap
 
@@ -235,6 +265,8 @@ Stretch:
     • Adapter marketplace
 ```
 
+---
+
 ## 🗂️ Legacy v1 (Quarantined, but preserved)
 
 ```
@@ -248,6 +280,7 @@ legacy_v1/
 
 Everything from the chaotic v1 era lives here — safely isolated where it can’t interfere with the v2 engine.
 
+---
 
 ## 🤝 Contributing
 
@@ -269,13 +302,7 @@ Design principles:
 
 Pull requests welcome — just keep it sharp.
 
-
-## 🏷️ Versioning
-
-```
-v2.x is the active engine.
-v1.x is archived in legacy_v1/ and will not receive updates.
-```
+---
 
 ## 📜 License
 
