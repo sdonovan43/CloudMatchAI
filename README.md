@@ -169,6 +169,41 @@ profile:
 This is the “does the engine even run” profile.  
 It does.
 
+## 🧪 Profile Template (Start Here)
+
+```
+# template.match.yaml
+
+profile:
+  adapter: rest_api        # static | rest_api | playwright | your_custom_adapter
+  source:
+    endpoint: "https://api.example.com/items"
+    method: GET
+    headers: {}
+    params: {}
+
+  criteria:
+    cost: 0.3              # weight: 0.0–1.0
+    performance: 0.4
+    reliability: 0.2
+    support: 0.1
+
+  llm:
+    model: "gpt-4o"
+    temperature: 0.0
+    max_tokens: 300
+
+metadata:
+  description: "Template scoring profile for new match types"
+  version: "1.0"
+```
+
+How to use it:
+    • Copy → rename → customize  
+    • Add/remove criteria as needed  
+    • Adjust weights to shape scoring behavior  
+    • Point the adapter at any data source  
+
 ---
 
 ## ▶️ Run It
