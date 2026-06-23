@@ -1,117 +1,90 @@
-<div align="center">
+⚡ CloudMatchAI v2
+A precision-built, YAML‑driven scoring engine for anything worth ranking.
+CloudMatchAI v2 is the clean reboot — a modular, adapter‑based engine that takes structured input, applies weighted logic, and lets an LLM do the heavy lifting on evaluation.
+It’s lean. It’s sharp. It’s not here to hold your hand.
 
-<img src="https://img.shields.io/badge/CloudMatchAI-v2.0.0-4F8EF7?style=for-the-badge&logo=amazonaws&logoColor=white"/>
-<img src="https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge"/>
-<img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
-<img src="https://img.shields.io/badge/CLI-Tool-0A84FF?style=for-the-badge"/>
-<img src="https://img.shields.io/badge/Adapters-Pluggable-8B5CF6?style=for-the-badge"/>
+If v1 was a job scraper with opinions,
+v2 is a scalpel.
 
-<h1>☁️ CloudMatchAI v2.0</h1>
+🚀 Why v2 Exists
+Because the world doesn’t need another bloated “AI platform.”
+It needs a simple, composable engine that can score:
 
-<p>
-<strong>Lightweight, adapter‑driven cloud provider scoring engine.</strong><br/>
-Define your criteria in YAML. Plug in any provider adapter. Get ranked, explainable results instantly.
-</p>
+cloud providers
 
-<p>
-<a href="#-overview">Overview</a> •
-<a href="#-features">Features</a> •
-<a href="#-architecture">Architecture</a> •
-<a href="#-usage">Usage</a> •
-<a href="#-configuration">Configuration</a> •
-<a href="#-adapters">Adapters</a> •
-<a href="#-roadmap">Roadmap</a>
-</p>
+job listings
 
-</div>
+apartments
 
-🌐 Overview
-CloudMatchAI v2.0 is a simple, transparent, extensible scoring engine for evaluating cloud providers.
+tequila brands
 
-Where v1 was a full FastAPI + GPT‑powered recommendation platform, v2.0 is a clean, dependency‑free CLI tool designed for:
+dogs
 
-quick comparisons
+anything with attributes
 
-reproducible scoring
+Change the YAML → change the universe.
+No rewrites. No drama.
 
-adapter‑based provider data
+🧩 Core Concepts (No BS)
+YAML is the source of truth
+Profiles, criteria, adapters — all defined in .yaml.
+You don’t touch Python unless you want to.
 
-YAML‑driven criteria
+Adapters do the fetching
+Static, REST, Playwright — or whatever you write next.
+One class = one data source.
 
-explainable results
+LLM does the scoring
+Weighted criteria + GPT‑4o = ranked, explained results.
 
-It’s perfect for:
-
-architecture teams
-
-cloud cost reviews
-
-vendor evaluations
-
-internal tooling
-
-demos and prototypes
-
-✨ Features
-Feature	Description
-🔌 Adapter System	Plug in any provider source (static, API, DB, custom)
-📊 Weighted Scoring	Cost, performance, support, or any custom metric
-🧩 YAML Profiles	Define criteria and weights in a simple config file
-🧠 Explainability	Every score includes a human‑readable explanation
-🛠 Zero Dependencies	Pure Python — no FastAPI, no DB, no Redis
-🚀 CLI‑First	Run evaluations instantly from the command line
-
-
-🏗️ Architecture
-CloudMatchAI v2.0 is intentionally minimal:
-
+CLI runs the whole thing
 Code
-┌───────────────────────────────────────────────┐
-│                 CloudMatchAI CLI              │
-│                                               │
-│   ┌──────────────┐    ┌────────────────────┐ │
-│   │  YAML Config  │───▶│   Scoring Engine   │ │
-│   └──────────────┘    └─────────┬──────────┘ │
-│                                  │            │
-│                         ┌────────▼────────┐   │
-│                         │   Adapter Layer  │   │
-│                         │ (Static / API /  │   │
-│                         │   Custom Data)   │   │
-│                         └────────┬────────┘   │
-│                                  │            │
-│                         ┌────────▼────────┐   │
-│                         │ Provider Dataset │   │
-│                         └──────────────────┘   │
-└───────────────────────────────────────────────┘
-Scoring Formula
+python cli.py <profile.yaml>
+That’s it.
+No flags. No 14‑step onboarding ritual.
+
+🧱 Architecture (The 10‑second mental model)
 Code
-score = Σ (provider_metric × weight)
-Every provider receives:
+   YAML Profile
+       │
+       ▼
+   config.py
+   (validation + loading)
+       │
+       ▼
+   adapters.py
+   (data source plug-ins)
+       │
+       ▼
+   scorer.py
+   (LLM scoring engine)
+       │
+       ▼
+   cli.py
+   (execution + output)
+Everything is explicit.
+Everything is traceable.
+Everything is replaceable.
 
-total score
-
-per‑criterion breakdown
-
-explanation
-
-🚀 Usage
-Run the CLI
+📂 Repo Layout (v2‑clean, no dead weight)
 Code
-python cli.py test.match.yaml
-Example Output
-Code
-Provider: AWS
-Score: 0.87
-Breakdown:
-  - cost: 0.8
-  - performance: 0.9
-  - support: 0.7
-Explanation:
-AWS performs strongly in performance and cost efficiency...
-----------------------------------------
-⚙️ Configuration
-A scoring profile is defined in YAML:
+CloudMatchAI/
+│
+├── adapters.py          # pluggable data sources
+├── cli.py               # command-line runner
+├── config.py            # YAML loader + validation
+├── scorer.py            # LLM scoring engine
+├── clouds.match.yaml    # example cloud scoring profile
+├── test.match.yaml      # minimal static test profile
+├── requirements.txt
+├── README.md
+│
+├── legacy_v1/           # entire v1 system quarantined
+├── docs/                # optional docs
+└── logs/                # runtime logs
+If it’s not part of the v2 engine, it lives in legacy_v1/ where it can’t hurt anyone.
 
+📝 Example Profile (test.match.yaml)
 yaml
 profile:
   adapter: static
@@ -119,55 +92,83 @@ profile:
     cost: 0.4
     performance: 0.4
     support: 0.2
-🔌 Adapters
-Adapters live in adapters.py and must implement:
+This is the “does the engine even run” profile.
+It does.
 
-python
-class BaseAdapter:
-    def load(self):
-        raise NotImplementedError
-Static Adapter Example
-python
-class StaticAdapter(BaseAdapter):
-    def load(self):
-        return [
-            {"name": "AWS", "cost": 0.8, "performance": 0.9, "support": 0.7},
-            {"name": "Azure", "cost": 0.7, "performance": 0.85, "support": 0.8},
-            {"name": "GCP", "cost": 0.75, "performance": 0.88, "support": 0.65},
-        ]
-You can add:
-
-API adapters
-
-database adapters
-
-CSV adapters
-
-scraped data adapters
-
-internal enterprise adapters
-
-🧪 Testing
+▶️ Run It
 Code
 python cli.py test.match.yaml
-(Yes — that’s the whole test.)
+You’ll get output like:
 
-🗺️ Roadmap
-[ ] v2.1 — Real cloud provider adapters
+Code
+Provider: AWS
+Score: 0.87
+Breakdown:
+  cost: 0.8
+  performance: 0.9
+  support: 0.7
 
-[ ] v2.2 — Visualization output (charts, radar plots)
+Explanation:
+AWS performs strongly in performance and cost efficiency...
+----------------------------------------
+Swap the YAML → score something else.
+The engine doesn’t care.
 
-[ ] v2.3 — Web UI wrapper
+🔌 Adapters (The Real Power Move)
+StaticAdapter
+For testing. Zero dependencies. Zero excuses.
 
-[ ] v3.0 — Unified engine replacing legacy v1 folder
+RestAPIAdapter
+Point it at an API.
+It fetches. You score.
 
-📄 License
-MIT License.
+PlaywrightAdapter
+For dynamic sites.
+Use it when the data refuses to sit still.
 
-<div align="center">
+Write your own
+One class.
+One method.
+Infinite possibilities.
 
-Built with ☁️ and 🔧 by the CloudMatchAI team.<br/>
-<a href="https://github.com/sdonovan43/CloudMatchAI/issues">Report a Bug</a> •
-<a href="https://github.com/sdonovan43/CloudMatchAI/issues">Request a Feature</a>
+🧠 Scoring Engine (LLM‑backed, not LLM‑bloated)
+scorer.py handles:
 
-</div>
+weighted scoring
+
+structured breakdowns
+
+LLM‑generated explanations
+
+consistent ranking
+
+It’s intentionally small.
+If you want to tweak the logic, you won’t need a machete.
+
+🗂️ Legacy v1 (Quarantined, but preserved)
+Everything from the old job‑scraper era lives in:
+
+Code
+legacy_v1/
+It’s not loaded.
+It’s not imported.
+It’s not part of v2.
+It’s just there in case you ever want to remember how chaotic things used to be.
+
+🤝 Contributing
+If you want to add:
+
+new adapters
+
+new scoring profiles
+
+better docs
+
+performance improvements
+
+…go for it.
+The engine is built to be extended.
+
+📜 License
+MIT.
+Do whatever you want — just don’t blame me if you point it at tequila brands and start a bar fight.
