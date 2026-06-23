@@ -209,6 +209,32 @@ Design philosophy:
     • No machete required
 ```
 
+## ⚡ Quick Start
+
+```
+git clone https://github.com/sdonovan43/CloudMatchAI
+cd CloudMatchAI
+pip install -r requirements.txt
+python cli.py test.match.yaml
+```
+
+If you see ranked output → the engine is alive.
+
+
+## 🗺️ Roadmap
+
+```
+Planned:
+    • Vector‑based similarity scoring
+    • Multi‑adapter fan‑in (merge multiple sources)
+    • Optional caching layer
+    • CLI: --explain, --raw, --json flags
+
+Stretch:
+    • Web UI for profile editing
+    • Adapter marketplace
+```
+
 ## 🗂️ Legacy v1 (Quarantined, but preserved)
 
 ```
@@ -243,6 +269,13 @@ Design principles:
 
 Pull requests welcome — just keep it sharp.
 
+
+## 🏷️ Versioning
+
+```
+v2.x is the active engine.
+v1.x is archived in legacy_v1/ and will not receive updates.
+```
 
 ## 📜 License
 
