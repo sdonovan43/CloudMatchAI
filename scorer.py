@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Any
 import httpx
+import json
 
 
 # ============================
@@ -44,6 +45,13 @@ class OpenAIProvider(BaseLLMProvider):
 class GroqProvider(BaseLLMProvider):
     async def chat(self, messages: list[dict]) -> str:
         async with httpx.AsyncClient(timeout=30) as client:
+
+            # Debug output
+            print("\n=== GROQ REQUEST DEBUG ===")
+            print("Model:", self.cfg.llm.model)
+            print("Messages:", messages)
+            print("==========================\n")
+
             resp = await client.post(
                 f"{self.cfg.llm.endpoint}/chat/completions",
                 headers={"Authorization": f"Bearer {self.cfg.llm.api_key}"},
@@ -54,6 +62,7 @@ class GroqProvider(BaseLLMProvider):
                     "stream": False,
                 },
             )
+
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
 
@@ -158,9 +167,11 @@ async def score_entities(cfg, entities: list[dict[str, Any]]) -> list[dict[str, 
         # ----------------------------
         #   LLM Explanation
         # ----------------------------
+        breakdown_json = json.dumps(breakdown)
+
         prompt = (
             f"Explain why the score {total_score:.2f} makes sense "
-            f"based on this breakdown: {breakdown}."
+            f"based on this breakdown: {breakdown_json}."
         )
 
         explanation = await provider.chat([
