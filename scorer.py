@@ -30,6 +30,7 @@ class OpenAIProvider(BaseLLMProvider):
                     "model": self.cfg.llm.model,
                     "messages": messages,
                     "temperature": 0.0,
+                    "stream": False,
                 },
             )
         resp.raise_for_status()
@@ -50,6 +51,7 @@ class GroqProvider(BaseLLMProvider):
                     "model": self.cfg.llm.model,
                     "messages": messages,
                     "temperature": 0.0,
+                    "stream": False,
                 },
             )
         resp.raise_for_status()
@@ -69,6 +71,7 @@ class AzureOpenAIProvider(BaseLLMProvider):
                 json={
                     "messages": messages,
                     "temperature": 0.0,
+                    "stream": False,
                 },
             )
         resp.raise_for_status()
@@ -87,6 +90,7 @@ class OllamaProvider(BaseLLMProvider):
                 json={
                     "model": self.cfg.llm.model,
                     "messages": messages,
+                    "stream": False,
                 },
             )
         resp.raise_for_status()
@@ -155,12 +159,8 @@ async def score_entities(cfg, entities: list[dict[str, Any]]) -> list[dict[str, 
         #   LLM Explanation
         # ----------------------------
         prompt = (
-            "You are a scoring engine. "
-            "Given the following entity and its weighted scoring breakdown, "
-            "explain the score in 3–5 sentences.\n\n"
-            f"Entity: {entity}\n"
-            f"Breakdown: {breakdown}\n"
-            f"Final Score: {total_score:.2f}"
+            f"Explain why the score {total_score:.2f} makes sense "
+            f"based on this breakdown: {breakdown}."
         )
 
         explanation = await provider.chat([
