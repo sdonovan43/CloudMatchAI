@@ -12,7 +12,7 @@ class BaseLLMProvider:
     def __init__(self, cfg):
         self.cfg = cfg
 
-    def chat(self, messages: list[dict]) -> str:
+    async def chat(self, messages: list[dict]) -> str:
         raise NotImplementedError
 
 
@@ -21,17 +21,17 @@ class BaseLLMProvider:
 # ----------------------------
 
 class OpenAIProvider(BaseLLMProvider):
-    def chat(self, messages: list[dict]) -> str:
-        resp = httpx.post(
-            f"{self.cfg.llm.endpoint}/chat/completions",
-            headers={"Authorization": f"Bearer {self.cfg.llm.api_key}"},
-            json={
-                "model": self.cfg.llm.model,
-                "messages": messages,
-                "temperature": 0.0,
-            },
-            timeout=30,
-        )
+    async def chat(self, messages: list[dict]) -> str:
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.post(
+                f"{self.cfg.llm.endpoint}/chat/completions",
+                headers={"Authorization": f"Bearer {self.cfg.llm.api_key}"},
+                json={
+                    "model": self.cfg.llm.model,
+                    "messages": messages,
+                    "temperature": 0.0,
+                },
+            )
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
 
@@ -41,17 +41,17 @@ class OpenAIProvider(BaseLLMProvider):
 # ----------------------------
 
 class GroqProvider(BaseLLMProvider):
-    def chat(self, messages: list[dict]) -> str:
-        resp = httpx.post(
-            f"{self.cfg.llm.endpoint}/chat/completions",
-            headers={"Authorization": f"Bearer {self.cfg.llm.api_key}"},
-            json={
-                "model": self.cfg.llm.model,
-                "messages": messages,
-                "temperature": 0.0,
-            },
-            timeout=30,
-        )
+    async def chat(self, messages: list[dict]) -> str:
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.post(
+                f"{self.cfg.llm.endpoint}/chat/completions",
+                headers={"Authorization": f"Bearer {self.cfg.llm.api_key}"},
+                json={
+                    "model": self.cfg.llm.model,
+                    "messages": messages,
+                    "temperature": 0.0,
+                },
+            )
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
 
@@ -61,16 +61,16 @@ class GroqProvider(BaseLLMProvider):
 # ----------------------------
 
 class AzureOpenAIProvider(BaseLLMProvider):
-    def chat(self, messages: list[dict]) -> str:
-        resp = httpx.post(
-            f"{self.cfg.llm.endpoint}/openai/deployments/{self.cfg.llm.model}/chat/completions?api-version=2024-02-01",
-            headers={"api-key": self.cfg.llm.api_key},
-            json={
-                "messages": messages,
-                "temperature": 0.0,
-            },
-            timeout=30,
-        )
+    async def chat(self, messages: list[dict]) -> str:
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.post(
+                f"{self.cfg.llm.endpoint}/openai/deployments/{self.cfg.llm.model}/chat/completions?api-version=2024-02-01",
+                headers={"api-key": self.cfg.llm.api_key},
+                json={
+                    "messages": messages,
+                    "temperature": 0.0,
+                },
+            )
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
 
@@ -80,15 +80,15 @@ class AzureOpenAIProvider(BaseLLMProvider):
 # ----------------------------
 
 class OllamaProvider(BaseLLMProvider):
-    def chat(self, messages: list[dict]) -> str:
-        resp = httpx.post(
-            f"{self.cfg.llm.endpoint}/chat",
-            json={
-                "model": self.cfg.llm.model,
-                "messages": messages,
-            },
-            timeout=30,
-        )
+    async def chat(self, messages: list[dict]) -> str:
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.post(
+                f"{self.cfg.llm.endpoint}/chat",
+                json={
+                    "model": self.cfg.llm.model,
+                    "messages": messages,
+                },
+            )
         resp.raise_for_status()
         return resp.json()["message"]["content"]
 
@@ -119,7 +119,7 @@ def get_llm_provider(cfg):
 #       SCORING ENGINE
 # ============================
 
-def score_entities(cfg, entities: list[dict[str, Any]]) -> list[dict[str, Any]]:
+async def score_entities(cfg, entities: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """
     Applies weighted scoring + LLM explanation.
     Returns ranked list of entities with breakdown + explanation.
@@ -140,11 +140,9 @@ def score_entities(cfg, entities: list[dict[str, Any]]) -> list[dict[str, Any]]:
         for key, weight in criteria.items():
             raw_value = entity.get(key)
 
-            # Normalize numeric-ish values
             if isinstance(raw_value, (int, float)):
                 score = float(raw_value)
             elif isinstance(raw_value, str):
-                # crude normalization for now
                 mapping = {"low": 0.3, "medium": 0.6, "high": 0.9}
                 score = mapping.get(raw_value.lower(), 0.5)
             else:
@@ -165,7 +163,7 @@ def score_entities(cfg, entities: list[dict[str, Any]]) -> list[dict[str, Any]]:
             f"Final Score: {total_score:.2f}"
         )
 
-        explanation = provider.chat([
+        explanation = await provider.chat([
             {"role": "system", "content": "You are a precise scoring analyst."},
             {"role": "user", "content": prompt},
         ])
@@ -177,5 +175,4 @@ def score_entities(cfg, entities: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "explanation": explanation,
         })
 
-    # Sort descending
     return sorted(results, key=lambda r: r["score"], reverse=True)

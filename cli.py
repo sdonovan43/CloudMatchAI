@@ -17,7 +17,7 @@ async def run_pipeline(config_path: str):
     unique = dedupe(items)
     scored = await score_entities(cfg, unique)
 
-    store(scored)
+    store(scored, cfg.storage.path)
 
     print(f"Fetched: {len(items)}")
     print(f"Unique: {len(unique)}")
