@@ -1,6 +1,25 @@
+source:
+  adapter: groq
+  url: https://jsonplaceholder.typicode.com/posts
+  method: GET
+  headers: {}
+  params: {}
+
 profile:
-  adapter: static
-  criteria:
-    cost: 0.4
-    performance: 0.4
-    support: 0.2
+  name: "Test Post Match"
+  description: "Simple test profile for CloudMatchAI v2.0 pipeline"
+  fields:
+    - id
+    - title
+    - body
+
+scoring:
+  model: gpt-4o-mini
+  prompt: |
+    You are evaluating how interesting this item is.
+    Score from 1 to 10.
+    Return JSON: {"score": <number>, "reason": "<short reason>"}.
+
+storage:
+  type: json
+  path: test_output.json
