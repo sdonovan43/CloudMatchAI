@@ -1,5 +1,4 @@
 import asyncio
-import uvloop
 from pathlib import Path
 
 from config import load_config
@@ -36,7 +35,6 @@ def main():
     if not config_path.exists():
         raise FileNotFoundError(f"Config not found: {config_path}")
 
-    uvloop.install()
     asyncio.run(run_pipeline(str(config_path)))
 
 
