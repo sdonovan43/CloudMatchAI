@@ -60,6 +60,7 @@ class GroqProvider(BaseLLMProvider):
                     "messages": messages,
                     "temperature": 0.0,
                     "stream": False,
+                    "max_tokens": 256, 
                 },
             )
 
