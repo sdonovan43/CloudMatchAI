@@ -12,6 +12,10 @@ profile:
     - id
     - title
     - body
+  criteria:
+    id: 0.2
+    title: 0.4
+    body: 0.4
 
 scoring:
   model: gpt-4o-mini
@@ -19,6 +23,12 @@ scoring:
     You are evaluating how interesting this item is.
     Score from 1 to 10.
     Return JSON: {"score": <number>, "reason": "<short reason>"}.
+
+llm:
+  provider: groq
+  endpoint: https://api.groq.com/v1
+  api_key: "YOUR_GROQ_API_KEY"
+  model: gpt-4o-mini
 
 storage:
   type: json
