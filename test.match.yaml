@@ -26,9 +26,10 @@ scoring:
 
 llm:
   provider: groq
-  endpoint: https://api.groq.com/v1
-  api_key: "YOUR_GROQ_API_KEY"
-  model: gpt-4o-mini
+  endpoint: https://api.groq.com/openai/v1
+  api_key: ${GROQ_API_KEY}
+  model: llama3-70b-8192
+
 
 storage:
   type: json

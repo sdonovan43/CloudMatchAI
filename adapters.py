@@ -10,7 +10,7 @@ class BaseAdapter(ABC):
         self.cfg = cfg
 
     @abstractmethod
-    def fetch(self) -> list[dict[str, Any]]:
+    async def fetch(self) -> list[dict[str, Any]]:
         ...
 
 
@@ -21,49 +21,38 @@ class BaseAdapter(ABC):
 class GroqAdapter(BaseAdapter):
     """
     Adapter for Groq's OpenAI-compatible API.
+    This adapter is for fetching ENTITIES, not scoring.
     """
 
-    def fetch(self) -> list[dict[str, Any]]:
-        endpoint = self.cfg.source.endpoint
+    async def fetch(self) -> list[dict[str, Any]]:
+        url = self.cfg.source.url  # correct field
+        method = self.cfg.source.method.upper()
+        headers = self.cfg.source.headers or {}
+        params = self.cfg.source.params or {}
 
-        headers = {
-            "Authorization": f"Bearer {self.cfg.llm.api_key}",
-            "Content-Type": "application/json",
-        }
+        async with httpx.AsyncClient(timeout=30) as client:
+            try:
+                if method == "GET":
+                    resp = await client.get(url, headers=headers, params=params)
+                else:
+                    resp = await client.post(url, headers=headers, json=params)
 
-        payload = {
-            "model": self.cfg.llm.model,
-            "messages": [
-                {
-                    "role": "user",
-                    "content": "Return a JSON list of entities to score."
-                }
-            ],
-            "temperature": 0.0,
-        }
+                resp.raise_for_status()
+                data = resp.json()
 
-        try:
-            resp = httpx.post(endpoint, headers=headers, json=payload, timeout=30)
-            resp.raise_for_status()
-            data = resp.json()
+                if isinstance(data, list):
+                    return data
+                if isinstance(data, dict):
+                    # try to extract list from dict
+                    for v in data.values():
+                        if isinstance(v, list):
+                            return v
 
-            # If Groq returns a raw list
-            if isinstance(data, list):
-                return data
+                return []
 
-            # If Groq returns OpenAI-style structure
-            if isinstance(data, dict):
-                try:
-                    content = data["choices"][0]["message"]["content"]
-                    return httpx.Response.json(httpx.Response(200, text=content))
-                except Exception:
-                    pass
-
-            return []
-
-        except Exception as e:
-            print("GROQ ADAPTER ERROR:", e)
-            return []
+            except Exception as e:
+                print("GROQ ADAPTER ERROR:", e)
+                return []
 
 
 # ============================
@@ -71,25 +60,34 @@ class GroqAdapter(BaseAdapter):
 # ============================
 
 class RestAPIAdapter(BaseAdapter):
-    def fetch(self) -> list[dict[str, Any]]:
-        try:
-            resp = httpx.get(self.cfg.source.endpoint, timeout=10)
-            resp.raise_for_status()
-            data = resp.json()
+    async def fetch(self) -> list[dict[str, Any]]:
+        url = self.cfg.source.url
+        method = self.cfg.source.method.upper()
+        headers = self.cfg.source.headers or {}
+        params = self.cfg.source.params or {}
 
-            if isinstance(data, list):
-                return data
+        async with httpx.AsyncClient(timeout=10) as client:
+            try:
+                if method == "GET":
+                    resp = await client.get(url, headers=headers, params=params)
+                else:
+                    resp = await client.post(url, headers=headers, json=params)
 
-            if isinstance(data, dict):
-                for v in data.values():
-                    if isinstance(v, list):
-                        return v
+                resp.raise_for_status()
+                data = resp.json()
 
-            return []
+                if isinstance(data, list):
+                    return data
+                if isinstance(data, dict):
+                    for v in data.values():
+                        if isinstance(v, list):
+                            return v
 
-        except Exception as e:
-            print("REST API ERROR:", e)
-            return []
+                return []
+
+            except Exception as e:
+                print("REST API ERROR:", e)
+                return []
 
 
 # ============================
@@ -97,7 +95,7 @@ class RestAPIAdapter(BaseAdapter):
 # ============================
 
 class StaticAdapter(BaseAdapter):
-    def fetch(self) -> list[dict[str, Any]]:
+    async def fetch(self) -> list[dict[str, Any]]:
         return [
             {
                 "name": "AWS",
