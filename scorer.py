@@ -177,7 +177,7 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
     """
     Orchestrates the asynchronous evaluation pipeline.
     Passes criteria to the provider and maps matching scores back to elements.
-    Includes a 3-pass transient failure retry mechanism.
+    Includes an aggressive backoff pacing mechanism optimized for free-tier quotas.
     """
     if not items:
         return []
@@ -191,7 +191,12 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
         "Return data exclusively as a JSON object matching requested criteria formatting."
     )
 
-    for item in items:
+    for i, item in enumerate(items):
+        # --- PACE FREE-TIER REQUESTS ---
+        # If this isn't the first item, pause for 4 seconds to avoid hitting the 20 RPM limit
+        if i > 0 and cfg.llm.provider.lower() == "gemini":
+            await asyncio.sleep(4.0)
+
         user_prompt = (
             f"Profile Context:\n"
             f"Name: {cfg.profile.name}\n"
@@ -219,18 +224,18 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
             except httpx.HTTPStatusError as e:
                 if e.response.status_code in [429, 503]:
                     attempt += 1
-                    print(f"SCORER RETRY: Server status {e.response.status_code} on '{item.get('name', 'Unknown')}'. Backing off... (Attempt {attempt}/{max_retries})")
-                    await asyncio.sleep(1.0 * attempt)
+                    # Aggressive backoff: Attempt 1 = 15s, Attempt 2 = 30s, Attempt 3 = 45s
+                    # This guarantees Google's rolling 60-second free tier window clears.
+                    backoff_time = 15.0 * attempt 
+                    print(f"SCORER RETRY: Server status {e.response.status_code} on '{item.get('name', 'Unknown')}'."
+                          f" Backing off for {backoff_time}s... (Attempt {attempt}/{max_retries})")
+                    await asyncio.sleep(backoff_time)
                 else:
-                    # If it's an HTTPStatusError but not 429 or 503,
-                    # treat it as an unrecoverable error for this item and stop retrying.
                     print(f"SCORER ERROR: Unrecoverable HTTPStatusError for '{item.get('name', 'Unknown')}' (Status: {e.response.status_code}): {e}")
-                    break # Exit the retry loop for this item
+                    break 
             except Exception as e:
-                # Catches all other exceptions, including json.JSONDecodeError
                 print(f"SCORER ERROR: Unrecoverable processing error for '{item.get('name', 'Unknown')}': {e}")
                 break
-
 
         if success and parsed_scores:
             enriched_item = item.copy()
