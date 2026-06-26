@@ -108,83 +108,23 @@ class OllamaProvider(BaseLLMProvider):
 
 
 # ----------------------------
-#   Provider Router
+#   Gemini Provider
 # ----------------------------
 
-LLM_PROVIDERS = {
-    "openai": OpenAIProvider,
-    "groq": GroqProvider,
-    "azure": AzureOpenAIProvider,
-    "ollama": OllamaProvider,
-}
+class GeminiProvider(BaseLLMProvider):
+    async def chat(self, messages: list[dict]) -> str:
+        """
+        Executes a completion request using Google's native developer API syntax.
+        Converts generic OpenAI roles into Gemini's contents/system_instruction format.
+        """
+        contents = []
+        system_instruction = None
 
-def get_llm_provider(cfg):
-    provider_name = cfg.llm.provider.lower()
-    cls = LLM_PROVIDERS.get(provider_name)
-    if not cls:
-        raise ValueError(
-            f"Unknown LLM provider '{provider_name}'. "
-            f"Available: {list(LLM_PROVIDERS)}"
-        )
-    return cls(cfg)
-
-
-# ============================
-#       SCORING ENGINE
-# ============================
-
-async def score_entities(cfg, entities: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """
-    Applies weighted scoring + LLM explanation.
-    Returns ranked list of entities with breakdown + explanation.
-    """
-
-    criteria = cfg.profile.criteria
-    provider = get_llm_provider(cfg)
-
-    results = []
-
-    for entity in entities:
-        # ----------------------------
-        #   Weighted numeric scoring
-        # ----------------------------
-        breakdown = {}
-        total_score = 0.0
-
-        for key, weight in criteria.items():
-            raw_value = entity.get(key)
-
-            if isinstance(raw_value, (int, float)):
-                score = float(raw_value)
-            elif isinstance(raw_value, str):
-                mapping = {"low": 0.3, "medium": 0.6, "high": 0.9}
-                score = mapping.get(raw_value.lower(), 0.5)
-            else:
-                score = 0.5
-
-            breakdown[key] = score
-            total_score += score * weight
-
-        # ----------------------------
-        #   LLM Explanation
-        # ----------------------------
-        breakdown_json = json.dumps(breakdown)
-
-        prompt = (
-            f"Explain why the score {total_score:.2f} makes sense "
-            f"based on this breakdown: {breakdown_json}."
-        )
-
-        explanation = await provider.chat([
-            {"role": "system", "content": "You are a precise scoring analyst."},
-            {"role": "user", "content": prompt},
-        ])
-
-        results.append({
-            "entity": entity,
-            "score": round(total_score, 4),
-            "breakdown": breakdown,
-            "explanation": explanation,
-        })
-
-    return sorted(results, key=lambda r: r["score"], reverse=True)
+        for msg in messages:
+            role = msg["role"]
+            content = msg["content"]
+            
+            if role == "system":
+                system_instruction = {"parts": [{"text": content}]}
+            elif role == "user":
+                contents.append({"role": "user", "parts": [{"text": content}]Normally I can help with things like this, but I don't seem to have access to that content. You can try again or ask me for something else.

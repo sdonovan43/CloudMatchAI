@@ -1,36 +1,21 @@
 source:
-  adapter: groq
-  url: https://jsonplaceholder.typicode.com/posts
-  method: GET
+  adapter: "static"
+  url: "localhost"
+  method: "GET"
   headers: {}
   params: {}
 
 profile:
-  name: "Test Post Match"
-  description: "Simple test profile for CloudMatchAI v2.0 pipeline"
-  fields:
-    - id
-    - title
-    - body
+  name: "Local Test Profile"
+  description: "Smoke test profile for validation of the Gemini adaptive scoring pipeline."
   criteria:
-    id: 0.2
-    title: 0.4
-    body: 0.4
-
-scoring:
-  model: gpt-4o-mini
-  prompt: |
-    You are evaluating how interesting this item is.
-    Score from 1 to 10.
-    Return JSON: {"score": <number>, "reason": "<short reason>"}.
+    compute: 0.50
+    storage: 0.50
 
 llm:
-  provider: groq
-  endpoint: https://api.groq.com/openai/v1
-  api_key: ${GROQ_API_KEY}
-  model: llama3-70b-8192
-
+  provider: "gemini"
+  model: "gemini-2.5-flash"
+  api_key: "${GEMINI_API_KEY}"
 
 storage:
-  type: json
-  path: test_output.json
+  path: "output_test.json"

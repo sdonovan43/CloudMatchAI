@@ -1,19 +1,23 @@
 source:
-  adapter: groq
-  endpoint: https://api.groq.com/openai/v1/chat/completions
+  adapter: "static"
+  url: "https://api.example.local/v1/mock-clouds"
+  method: "GET"
+  headers: {}
+  params: {}
 
 profile:
-  name: cloud-provider-eval
-  description: Evaluate cloud providers using weighted criteria
+  name: "Enterprise Multi-Cloud Matcher"
+  description: "Evaluates standard hyperscaler profiles against weighted architectural metrics."
   criteria:
-    compute: 0.25
-    storage: 0.25
-    egress: 0.20
-    regions: 0.15
-    compliance: 0.15
+    compute: 0.40
+    storage: 0.30
+    egress: 0.10
+    regions: 0.20
 
 llm:
-  provider: groq
-  endpoint: https://api.groq.com/openai/v1
-  model: llama3-70b-8192
-  api_key: ${GROQ_API_KEY}
+  provider: "gemini"
+  model: "gemini-2.5-flash"
+  api_key: "${GEMINI_API_KEY}"
+
+storage:
+  path: "output_clouds.json"

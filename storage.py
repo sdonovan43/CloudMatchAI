@@ -1,14 +1,29 @@
+from __future__ import annotations
 import json
 from pathlib import Path
+from typing import Any
 
 
-def store(items: list[dict], path: str | Path = None):
+def store(data: list[dict[str, Any]], path: str) -> None:
     """
-    Store scored items to a JSON file.
-    Path is provided by YAML config.
+    Saves the scored and ranked entity results to a JSON file.
+    Automatically creates any missing parent directories.
     """
-    if path is None:
-        raise ValueError("Storage path must be provided by config.")
+    if not path:
+        print("STORAGE ERROR: Provided storage path is empty. Falling back to 'output.json'")
+        path = "output.json"
 
-    path = Path(path)
-    path.write_text(json.dumps(items, indent=2))
+    output_path = Path(path)
+
+    try:
+        # Automatically create directory structures if they don't exist yet
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Write out with clean indentation for readability
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+            
+        print(f"SUCCESS: Pipeline results successfully saved to {output_path.resolve()}")
+
+    except Exception as e:
+        print(f"STORAGE ERROR: Failed to write data to '{path}'. Reason: {e}")

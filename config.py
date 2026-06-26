@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from pydantic import BaseModel
 import yaml
 import os
@@ -34,9 +34,9 @@ class MatchProfile(BaseModel):
 
 class LLMConfig(BaseModel):
     provider: str
-    endpoint: str
     model: str
     api_key: str
+    endpoint: Optional[str] = None  # Optional to natively support Gemini/Google SDK environments
 
 
 # ----------------------------
