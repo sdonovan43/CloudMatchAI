@@ -1,0 +1,81 @@
+[
+    {
+        "name": "AWS",
+        "compute": "high",
+        "storage": "high",
+        "egress": "high",
+        "regions": 30,
+        "compliance": [
+            "SOC2",
+            "GDPR"
+        ],
+        "_match_analysis": {
+            "entity_name": "AWS",
+            "total_score": 1.0,
+            "criteria_scores": {
+                "compute": {
+                    "score": 1.0,
+                    "reasoning": "AWS offers extensive and highly performant compute options, scoring maximum for 'high'."
+                },
+                "storage": {
+                    "score": 1.0,
+                    "reasoning": "AWS provides a vast array of high-performance and scalable storage services, scoring maximum for 'high'."
+                },
+                "egress": {
+                    "score": 1.0,
+                    "reasoning": "AWS offers high capacity and throughput for data egress, scoring maximum for 'high' capability."
+                },
+                "regions": {
+                    "score": 1.0,
+                    "reasoning": "With 30 regions, AWS demonstrates a leading global footprint, scoring maximum for regional coverage."
+                }
+            }
+        }
+    },
+    {
+        "name": "Azure",
+        "compute": "high",
+        "storage": "medium",
+        "egress": "medium",
+        "regions": 28,
+        "compliance": [
+            "SOC2",
+            "GDPR"
+        ],
+        "_match_analysis": {
+            "error": "Failed to generate scores"
+        }
+    },
+    {
+        "name": "GCP",
+        "compute": "medium",
+        "storage": "medium",
+        "egress": "low",
+        "regions": 25,
+        "compliance": [
+            "SOC2"
+        ],
+        "_match_analysis": {
+            "entity_name": "GCP",
+            "scores": {
+                "compute": {
+                    "score": 0.7,
+                    "reasoning": "GCP offers competitive compute options."
+                },
+                "storage": {
+                    "score": 0.7,
+                    "reasoning": "GCP provides robust and scalable storage solutions."
+                },
+                "egress": {
+                    "score": 1.0,
+                    "reasoning": "GCP is known for competitive egress pricing."
+                },
+                "regions": {
+                    "score": 0.625,
+                    "reasoning": "GCP has a strong global presence with 25 regions (scored against a max of 40 for top tier)."
+                }
+            },
+            "total_weighted_score": 0.715
+        }
+    }
+]

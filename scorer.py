@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Any
+import asyncio
 import httpx
 import json
 
@@ -176,6 +177,7 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
     """
     Orchestrates the asynchronous evaluation pipeline.
     Passes criteria to the provider and maps matching scores back to elements.
+    Includes a 3-pass transient failure retry mechanism.
     """
     if not items:
         return []
@@ -183,7 +185,6 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
     provider = _get_provider(cfg)
     scored_items = []
 
-    # Build evaluation prompts
     system_prompt = (
         "You are an expert procurement and cloud architecture analyzer. "
         "Analyze the given entities and score them strictly on the criteria weights provided. "
@@ -205,19 +206,40 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
             {"role": "user", "content": user_prompt}
         ]
 
-        try:
-            raw_response = await provider.chat(messages)
-            parsed_scores = json.loads(raw_response)
-            
-            # Enrich original entity with analytical findings
+        max_retries = 3
+        attempt = 0
+        success = False
+        parsed_scores = None
+
+        while attempt < max_retries and not success:
+            try:
+                raw_response = await provider.chat(messages)
+                parsed_scores = json.loads(raw_response)
+                success = True
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code in [429, 503]:
+                    attempt += 1
+                    print(f"SCORER RETRY: Server status {e.response.status_code} on '{item.get('name', 'Unknown')}'. Backing off... (Attempt {attempt}/{max_retries})")
+                    await asyncio.sleep(1.0 * attempt)
+                else:
+                    # If it's an HTTPStatusError but not 429 or 503,
+                    # treat it as an unrecoverable error for this item and stop retrying.
+                    print(f"SCORER ERROR: Unrecoverable HTTPStatusError for '{item.get('name', 'Unknown')}' (Status: {e.response.status_code}): {e}")
+                    break # Exit the retry loop for this item
+            except Exception as e:
+                # Catches all other exceptions, including json.JSONDecodeError
+                print(f"SCORER ERROR: Unrecoverable processing error for '{item.get('name', 'Unknown')}': {e}")
+                break
+
+
+        if success and parsed_scores:
             enriched_item = item.copy()
             enriched_item["_match_analysis"] = parsed_scores
             scored_items.append(enriched_item)
-        except Exception as e:
-            print(f"SCORER WARNING: Skipping entity '{item.get('name', 'Unknown')}' due to error: {e}")
-            # Fallback to keep raw item in the loop without dropping data completely
+        else:
+            print(f"SCORER FATAL: Skipping entity '{item.get('name', 'Unknown')}' completely after exhausted retry limits.")
             fallback = item.copy()
-            fallback["_match_analysis"] = {"error": "Failed to generate scores"}
+            fallback["_match_analysis"] = {"error": "Failed to generate scores after multiple backend attempts."}
             scored_items.append(fallback)
 
     return scored_items
