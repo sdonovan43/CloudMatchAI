@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Dict, Any, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import yaml
 import os
 import re
@@ -40,6 +40,14 @@ class LLMConfig(BaseModel):
 
 
 # ----------------------------
+#   Storage block
+# ----------------------------
+
+class StorageConfig(BaseModel):
+    path: str = "output.json"
+
+
+# ----------------------------
 #   Root config
 # ----------------------------
 
@@ -47,6 +55,7 @@ class RootConfig(BaseModel):
     source: SourceConfig
     profile: MatchProfile
     llm: LLMConfig
+    storage: StorageConfig = Field(default_factory=StorageConfig)
 
 
 # ----------------------------
