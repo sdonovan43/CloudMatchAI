@@ -125,6 +125,69 @@ class StaticAdapter(BaseAdapter):
 
 
 # ============================
+#       ADZUNA ADAPTER
+# ============================
+
+class AdzunaAdapter(BaseAdapter):
+    """
+    Fetches job listings via the Adzuna API (https://developer.adzuna.com/).
+    Adzuna aggregates listings from Indeed and many other boards under one
+    legitimate, ToS-compliant API — this avoids scraping LinkedIn/Indeed
+    directly, which their own Terms of Service prohibit.
+
+    Expected source config:
+        source:
+          adapter: "adzuna"
+          url: "https://api.adzuna.com/v1/api/jobs"   # base endpoint, no trailing slash
+          method: "GET"
+          params:
+            country: "us"              # adzuna country code, e.g. us, gb, au
+            what: "cyber security engineer"
+            where: "Athens GA"
+            results_per_page: 20
+            app_id: "${ADZUNA_APP_ID}"
+            app_key: "${ADZUNA_APP_KEY}"
+    """
+
+    async def fetch(self) -> list[dict[str, Any]]:
+        base_url = self.cfg.source.url.rstrip("/")
+        params = dict(self.cfg.source.params or {})
+
+        country = params.pop("country", "us")
+        page = params.pop("page", 1)
+        url = f"{base_url}/{country}/search/{page}"
+
+        async with httpx.AsyncClient(timeout=15) as client:
+            try:
+                resp = await client.get(url, params=params)
+                resp.raise_for_status()
+                data = resp.json()
+            except Exception as e:
+                print("ADZUNA ADAPTER ERROR:", e)
+                return []
+
+        results = data.get("results", [])
+        normalized = []
+        for job in results:
+            title = job.get("title", "").strip()
+            company = (job.get("company") or {}).get("display_name", "Unknown")
+            location = (job.get("location") or {}).get("display_name", "")
+            normalized.append({
+                "name": f"{title} — {company}",
+                "title": title,
+                "company": company,
+                "location": location,
+                "description": job.get("description", ""),
+                "salary_min": job.get("salary_min"),
+                "salary_max": job.get("salary_max"),
+                "contract_type": job.get("contract_type"),
+                "category": (job.get("category") or {}).get("label"),
+                "url": job.get("redirect_url"),
+            })
+        return normalized
+
+
+# ============================
 #       ADAPTER REGISTRY
 # ============================
 
@@ -132,6 +195,7 @@ ADAPTERS = {
     "rest_api": RestAPIAdapter,
     "static": StaticAdapter,
     "groq": GroqAdapter,
+    "adzuna": AdzunaAdapter,
 }
 
 

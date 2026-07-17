@@ -1,0 +1,41 @@
+source:
+  adapter: adzuna
+  url: https://api.adzuna.com/v1/api/jobs
+  method: GET
+  params:
+    country: us
+    what: cyber security
+    where: Athens GA
+    results_per_page: 5
+    app_id: ${ADZUNA_APP_ID}
+    app_key: ${ADZUNA_APP_KEY}
+profile:
+  name: IT Security / Writing-Adjacent Job Match
+  description: Scores incoming job listings against Sean's actual background and current goals.
+  criteria:
+    skills_match: 0.35
+    experience_match: 0.3
+    location_fit: 0.15
+    compensation_signal: 0.2
+candidate:
+  summary: 'Principal Data Engineer &amp; Cloud Data Architect specializing in modernizing enterprise
+    data ecosystems across energy, finance, and consulting. I design and lead transformations from legacy
+    SQL Server environments into secure, scalable Azure and Microsoft Fabric platforms that support analytics,
+    governance, and AI-driven workloads.I work end‑to‑end across architecture, migration, optimization,
+    automation, and stakeholder alignment — ensuring platforms are reliable, cost‑efficient, and built
+    for long‑term maintainability. My approach blends deep technical expertise with AI‑augmented engineering
+    practices that accelerate delivery and improve quality.Focus areas:   • Azure Data Platform, Fabric,
+    Synapse, SQL modernization • Data architecture, modeling, governance, lineage, and security • ETL/ELT
+    pipelines, orchestration, automation, and performance tuning • AI‑augmented engineering workflows
+    and rapid solution prototyping • Leading modernization strategy and mentoring engineering teamsI’m
+    focused on principal‑level remote roles where I can drive architecture, guide modernization, and help
+    organizations unlock value from their data.'
+  skills: []
+  experience_years: null
+  experience_summary: ''
+llm:
+  provider: gemini
+  model: gemini-2.5-flash
+  api_key: ${GEMINI_API_KEY}
+storage:
+  path: output_jobs.json

@@ -48,6 +48,17 @@ class StorageConfig(BaseModel):
 
 
 # ----------------------------
+#   Candidate profile block (optional — used for job-matching profiles)
+# ----------------------------
+
+class CandidateProfile(BaseModel):
+    summary: str = ""
+    skills: list[str] = Field(default_factory=list)
+    experience_years: Optional[float] = None
+    experience_summary: str = ""
+
+
+# ----------------------------
 #   Root config
 # ----------------------------
 
@@ -56,6 +67,7 @@ class RootConfig(BaseModel):
     profile: MatchProfile
     llm: LLMConfig
     storage: StorageConfig = Field(default_factory=StorageConfig)
+    candidate: Optional[CandidateProfile] = None
 
 
 # ----------------------------

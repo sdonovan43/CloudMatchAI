@@ -185,9 +185,28 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
     provider = _get_provider(cfg)
     scored_items = []
 
+    candidate = getattr(cfg, "candidate", None)
+
+    candidate_block = ""
+    if candidate is not None:
+        candidate_block = (
+            "\n\nCandidate Profile (match entities against THIS person's background):\n"
+            f"Summary: {candidate.summary}\n"
+            f"Skills: {', '.join(candidate.skills) if candidate.skills else 'Not specified'}\n"
+            f"Years of experience: {candidate.experience_years if candidate.experience_years is not None else 'Not specified'}\n"
+            f"Experience summary: {candidate.experience_summary}\n"
+        )
+
     system_prompt = (
-        "You are an expert procurement and cloud architecture analyzer. "
-        "Analyze the given entity and score it strictly on the criteria weights provided.\n\n"
+        "You are an expert evaluator scoring entities against a set of weighted criteria. "
+        "Analyze the given entity and score it strictly on the criteria weights provided."
+        + (
+            " When a Candidate Profile is supplied, treat this as a job-matching task: "
+            "score how well the entity (a job listing) fits the candidate's real skills, "
+            "experience, and background — not a generic ideal candidate."
+            if candidate is not None else ""
+        )
+        + "\n\n"
         "You MUST return ONLY a single JSON object, with NO markdown code fences, "
         "NO commentary, and NO text before or after the JSON.\n\n"
         "The JSON object MUST exactly match this schema, with one entry under \"scores\" "
@@ -214,16 +233,15 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
         if cfg.llm.provider.lower() == "gemini":
             await asyncio.sleep(4.0)
 
-        criteria_names = list(cfg.profile.criteria.keys())
-
         user_prompt = (
             f"Profile Context:\n"
             f"Name: {cfg.profile.name}\n"
             f"Description: {cfg.profile.description}\n"
-            f"Target Weights: {json.dumps(cfg.profile.criteria)}\n\n"
+            f"Target Weights: {json.dumps(cfg.profile.criteria)}"
+            f"{candidate_block}\n\n"
             f"Entity to Score:\n{json.dumps(item, indent=2)}\n\n"
             f"You must include exactly these criteria keys under \"scores\", no more and no fewer: "
-            f"{json.dumps(criteria_names)}\n"
+            f"{json.dumps(list(cfg.profile.criteria.keys()))}\n"
             f"Return ONLY the JSON object matching the schema described in the system prompt."
         )
 

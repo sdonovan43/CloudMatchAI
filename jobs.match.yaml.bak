@@ -1,0 +1,42 @@
+source:
+  adapter: "adzuna"
+  url: "https://api.adzuna.com/v1/api/jobs"
+  method: "GET"
+  params:
+    country: "us"
+    what: "cyber security"
+    where: "Athens GA"
+    results_per_page: 5
+    app_id: "${ADZUNA_APP_ID}"
+    app_key: "${ADZUNA_APP_KEY}"
+
+profile:
+  name: "IT Security / Writing-Adjacent Job Match"
+  description: "Scores incoming job listings against Sean's actual background and current goals."
+  criteria:
+    skills_match: 0.35
+    experience_match: 0.30
+    location_fit: 0.15
+    compensation_signal: 0.20
+
+candidate:
+  summary: "American writer and former IT security professional based in Athens, GA."
+  skills:
+    - "IT security"
+    - "network security"
+    - "risk assessment"
+    - "technical writing"
+    - "Python"
+  experience_years: 10
+  experience_summary: >
+    Background in IT security roles (network/infrastructure security, risk
+    assessment), transitioning toward writing-adjacent or hybrid technical
+    roles. Comfortable with remote work.
+
+llm:
+  provider: "gemini"
+  model: "gemini-2.5-flash"
+  api_key: "${GEMINI_API_KEY}"
+
+storage:
+  path: "output_jobs.json"
