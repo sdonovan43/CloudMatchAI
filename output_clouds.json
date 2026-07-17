@@ -10,7 +10,25 @@
             "GDPR"
         ],
         "_match_analysis": {
-            "error": "Failed to generate scores after multiple backend attempts."
+            "scores": {
+                "compute": {
+                    "score": 1.0,
+                    "reasoning": "AWS offers extensive and highly performant compute options, scoring top marks for this criterion."
+                },
+                "storage": {
+                    "score": 1.0,
+                    "reasoning": "AWS provides a comprehensive suite of highly scalable and diverse storage solutions, earning a perfect score."
+                },
+                "egress": {
+                    "score": 0.1,
+                    "reasoning": "AWS egress costs are notoriously high, significantly impacting cost efficiency for data transfer out."
+                },
+                "regions": {
+                    "score": 1.0,
+                    "reasoning": "AWS boasts a very large global footprint with 30 regions, offering excellent geographic distribution and resilience."
+                }
+            },
+            "overall_score": 0.91
         }
     },
     {
@@ -24,7 +42,25 @@
             "GDPR"
         ],
         "_match_analysis": {
-            "error": "Failed to generate scores after multiple backend attempts."
+            "scores": {
+                "compute": {
+                    "score": 1.0,
+                    "reasoning": "Azure offers high-performance compute options suitable for diverse workloads."
+                },
+                "storage": {
+                    "score": 0.5,
+                    "reasoning": "Azure provides a wide range of storage solutions, but its cost-effectiveness can vary depending on the specific service and scale."
+                },
+                "egress": {
+                    "score": 0.5,
+                    "reasoning": "Azure's egress costs are generally competitive but can become significant for high data transfer volumes."
+                },
+                "regions": {
+                    "score": 0.4666666666666667,
+                    "reasoning": "With 28 regions, Azure offers a substantial global footprint, though it has a larger overall presence than this specific number suggests."
+                }
+            },
+            "overall_score": 0.6933333333333332
         }
     },
     {
@@ -37,7 +73,25 @@
             "SOC2"
         ],
         "_match_analysis": {
-            "error": "Failed to generate scores after multiple backend attempts."
+            "scores": {
+                "compute": {
+                    "score": 0.7,
+                    "reasoning": "GCP offers a good range of compute options, fitting a 'medium' profile."
+                },
+                "storage": {
+                    "score": 0.7,
+                    "reasoning": "GCP provides diverse storage solutions suitable for various needs, aligning with a 'medium' profile."
+                },
+                "egress": {
+                    "score": 0.7,
+                    "reasoning": "GCP's egress costs are generally competitive, categorized as 'low' in this context."
+                },
+                "regions": {
+                    "score": 0.833,
+                    "reasoning": "With 25 regions, GCP offers substantial global reach, scoring well for regional distribution."
+                }
+            },
+            "overall_score": 0.7266
         }
     }
 ]
