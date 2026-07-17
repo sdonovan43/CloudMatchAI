@@ -1,0 +1,47 @@
+[
+    {
+        "name": "AWS",
+        "compute": "high",
+        "storage": "high",
+        "egress": "high",
+        "regions": 30,
+        "compliance": ["SOC2", "GDPR"],
+        "_match_analysis": {
+            "scores": {
+                "compute": {"score": 1.0, "reasoning": "The entity provides high compute capabilities, aligning perfectly with the desired attribute."},
+                "storage": {"score": 1.0, "reasoning": "The entity offers high storage capabilities, which is a strong positive for this criterion."}
+            },
+            "overall_score": 1.0
+        }
+    },
+    {
+        "name": "Azure",
+        "compute": "high",
+        "storage": "medium",
+        "egress": "medium",
+        "regions": 28,
+        "compliance": ["SOC2", "GDPR"],
+        "_match_analysis": {
+            "scores": {
+                "compute": {"score": 1.0, "reasoning": "The entity provides high compute capabilities, aligning well with potential performance needs."},
+                "storage": {"score": 0.5, "reasoning": "The entity offers medium storage capabilities, which might be adequate for some use cases but not optimal for others."}
+            },
+            "overall_score": 0.75
+        }
+    },
+    {
+        "name": "GCP",
+        "compute": "medium",
+        "storage": "medium",
+        "egress": "low",
+        "regions": 25,
+        "compliance": ["SOC2"],
+        "_match_analysis": {
+            "scores": {
+                "compute": {"score": 0.5, "reasoning": "The entity's 'medium' compute capability is a neutral fit for a general smoke test profile."},
+                "storage": {"score": 0.5, "reasoning": "The entity's 'medium' storage capability is a neutral fit for a general smoke test profile."}
+            },
+            "overall_score": 0.5
+        }
+    }
+]

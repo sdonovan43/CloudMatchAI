@@ -187,8 +187,23 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
 
     system_prompt = (
         "You are an expert procurement and cloud architecture analyzer. "
-        "Analyze the given entities and score them strictly on the criteria weights provided. "
-        "Return data exclusively as a JSON object matching requested criteria formatting."
+        "Analyze the given entity and score it strictly on the criteria weights provided.\n\n"
+        "You MUST return ONLY a single JSON object, with NO markdown code fences, "
+        "NO commentary, and NO text before or after the JSON.\n\n"
+        "The JSON object MUST exactly match this schema, with one entry under \"scores\" "
+        "for EVERY criterion listed in the Target Weights (never omit one, never add extras):\n\n"
+        "{\n"
+        '  "scores": {\n'
+        '    "<criterion_name>": {\n'
+        '      "score": <float between 0.0 and 1.0>,\n'
+        '      "reasoning": "<one sentence explanation>"\n'
+        "    }\n"
+        "    // one entry per criterion, using the exact criterion names given\n"
+        "  },\n"
+        '  "overall_score": <float between 0.0 and 1.0, the weighted average across all criteria>\n'
+        "}\n\n"
+        "Do not rename \"scores\" or \"overall_score\". Do not nest differently. "
+        "Do not add extra top-level keys."
     )
 
     for i, item in enumerate(items):
@@ -199,13 +214,17 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
         if cfg.llm.provider.lower() == "gemini":
             await asyncio.sleep(4.0)
 
+        criteria_names = list(cfg.profile.criteria.keys())
+
         user_prompt = (
             f"Profile Context:\n"
             f"Name: {cfg.profile.name}\n"
             f"Description: {cfg.profile.description}\n"
             f"Target Weights: {json.dumps(cfg.profile.criteria)}\n\n"
             f"Entity to Score:\n{json.dumps(item, indent=2)}\n\n"
-            f"Provide matching scores (0.0 to 1.0) and a brief raw string reasoning explanation."
+            f"You must include exactly these criteria keys under \"scores\", no more and no fewer: "
+            f"{json.dumps(criteria_names)}\n"
+            f"Return ONLY the JSON object matching the schema described in the system prompt."
         )
 
         messages = [
@@ -221,8 +240,16 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
         while attempt < max_retries and not success:
             try:
                 raw_response = await provider.chat(messages)
+                cleaned_response = raw_response.strip()
+                if cleaned_response.startswith("```"):
+                    # Strip a leading ```json or ``` and trailing ``` if present
+                    cleaned_response = cleaned_response.strip("`")
+                    if cleaned_response.lower().startswith("json"):
+                        cleaned_response = cleaned_response[4:]
+                    cleaned_response = cleaned_response.strip()
+
                 try:
-                    parsed_scores = json.loads(raw_response)
+                    parsed_scores = json.loads(cleaned_response)
                     success = True
                 except json.JSONDecodeError as e:
                     # This is the case that was previously silent: the HTTP call
