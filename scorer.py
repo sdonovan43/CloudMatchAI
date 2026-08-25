@@ -3,6 +3,7 @@ from typing import Any
 import asyncio
 import httpx
 import json
+import re
 
 
 # ============================
@@ -24,7 +25,7 @@ class BaseLLMProvider:
 
 class OpenAIProvider(BaseLLMProvider):
     async def chat(self, messages: list[dict]) -> str:
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx.AsyncClient(timeout=60) as client:
             resp = await client.post(
                 f"{self.cfg.llm.endpoint}/chat/completions",
                 headers={"Authorization": f"Bearer {self.cfg.llm.api_key}"},
@@ -45,13 +46,7 @@ class OpenAIProvider(BaseLLMProvider):
 
 class GroqProvider(BaseLLMProvider):
     async def chat(self, messages: list[dict]) -> str:
-        async with httpx.AsyncClient(timeout=30) as client:
-            # Debug output
-            print("\n=== GROQ REQUEST DEBUG ===")
-            print("Model:", self.cfg.llm.model)
-            print("Messages:", messages)
-            print("==========================\n")
-
+        async with httpx.AsyncClient(timeout=60) as client:
             resp = await client.post(
                 f"{self.cfg.llm.endpoint}/chat/completions",
                 headers={"Authorization": f"Bearer {self.cfg.llm.api_key}"},
@@ -60,10 +55,9 @@ class GroqProvider(BaseLLMProvider):
                     "messages": messages,
                     "temperature": 0.0,
                     "stream": False,
-                    "max_tokens": 256, 
+                    "max_tokens": 256,
                 },
             )
-
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
 
@@ -74,7 +68,7 @@ class GroqProvider(BaseLLMProvider):
 
 class AzureOpenAIProvider(BaseLLMProvider):
     async def chat(self, messages: list[dict]) -> str:
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx.AsyncClient(timeout=60) as client:
             resp = await client.post(
                 f"{self.cfg.llm.endpoint}/openai/deployments/{self.cfg.llm.model}/chat/completions?api-version=2024-02-01",
                 headers={"api-key": self.cfg.llm.api_key},
@@ -94,7 +88,7 @@ class AzureOpenAIProvider(BaseLLMProvider):
 
 class OllamaProvider(BaseLLMProvider):
     async def chat(self, messages: list[dict]) -> str:
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx.AsyncClient(timeout=60) as client:
             resp = await client.post(
                 f"{self.cfg.llm.endpoint}/chat",
                 json={
@@ -123,7 +117,7 @@ class GeminiProvider(BaseLLMProvider):
         for msg in messages:
             role = msg["role"]
             content = msg["content"]
-            
+
             if role == "system":
                 system_instruction = {"parts": [{"text": content}]}
             elif role == "user":
@@ -131,7 +125,6 @@ class GeminiProvider(BaseLLMProvider):
             elif role == "assistant":
                 contents.append({"role": "model", "parts": [{"text": content}]})
 
-        # Base URL for Google Developer standard endpoints
         base_url = "https://generativelanguage.googleapis.com/v1beta/models"
         url = f"{base_url}/{self.cfg.llm.model}:generateContent?key={self.cfg.llm.api_key}"
 
@@ -146,10 +139,14 @@ class GeminiProvider(BaseLLMProvider):
         if system_instruction:
             payload["systemInstruction"] = system_instruction
 
-        async with httpx.AsyncClient(timeout=30) as client:
+        # Timeout bumped from 30s -> 60s: prompts that include a full candidate
+        # profile (skills list, experience summary) are significantly larger
+        # than the original cloud-provider test prompts, and were tipping over
+        # the old 30s ceiling under normal (non-error) load.
+        async with httpx.AsyncClient(timeout=60) as client:
             resp = await client.post(url, json=payload)
             resp.raise_for_status()
-            
+
             resp_data = resp.json()
             return resp_data["candidates"][0]["content"]["parts"][0]["text"]
 
@@ -173,11 +170,54 @@ def _get_provider(cfg) -> BaseLLMProvider:
     return cls(cfg)
 
 
+def _extract_retry_delay(response: httpx.Response) -> float | None:
+    """
+    Figures out exactly how long to wait before retrying, using the most
+    precise source available:
+      1. A standard Retry-After header, if present.
+      2. Gemini's structured error body, which includes a RetryInfo detail
+         like {"@type": "...RetryInfo", "retryDelay": "35s"}.
+      3. A "Please retry in 12.3s" style message buried in the error text,
+         as a last-resort regex fallback.
+    Returns None if nothing usable is found, so the caller can fall back
+    to its own fixed backoff schedule.
+    A 1-second buffer is added on top of whatever Google reports, since
+    retrying at exactly the reported instant sometimes still gets a 429.
+    """
+    retry_after = response.headers.get("Retry-After")
+    if retry_after is not None:
+        try:
+            return float(retry_after) + 1.0
+        except ValueError:
+            pass
+
+    try:
+        body = response.json()
+        details = body.get("error", {}).get("details", [])
+        for detail in details:
+            delay_str = detail.get("retryDelay")
+            if delay_str and delay_str.endswith("s"):
+                return float(delay_str[:-1]) + 1.0
+    except (ValueError, json.JSONDecodeError, AttributeError):
+        pass
+
+    try:
+        text = response.text
+        match = re.search(r"retry in ([\d.]+)s", text, re.IGNORECASE)
+        if match:
+            return float(match.group(1)) + 1.0
+    except Exception:
+        pass
+
+    return None
+
+
 async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """
     Orchestrates the asynchronous evaluation pipeline.
-    Passes criteria to the provider and maps matching scores back to elements.
-    Includes an aggressive backoff pacing mechanism optimized for free-tier quotas.
+    Passes criteria (and, if present, a candidate profile) to the provider
+    and maps matching scores back to elements. Includes an aggressive backoff
+    pacing mechanism optimized for free-tier quotas.
     """
     if not items:
         return []
@@ -231,7 +271,7 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
         # doesn't immediately land inside a rate-limit window left over from
         # a previous run.
         if cfg.llm.provider.lower() == "gemini":
-            await asyncio.sleep(4.0)
+            await asyncio.sleep(5.0)
 
         user_prompt = (
             f"Profile Context:\n"
@@ -260,7 +300,6 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
                 raw_response = await provider.chat(messages)
                 cleaned_response = raw_response.strip()
                 if cleaned_response.startswith("```"):
-                    # Strip a leading ```json or ``` and trailing ``` if present
                     cleaned_response = cleaned_response.strip("`")
                     if cleaned_response.lower().startswith("json"):
                         cleaned_response = cleaned_response[4:]
@@ -269,13 +308,21 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
                 try:
                     parsed_scores = json.loads(cleaned_response)
                     success = True
-                except json.JSONDecodeError as e:
-                    # This is the case that was previously silent: the HTTP call
-                    # succeeded (status 200) but the body wasn't valid JSON —
-                    # e.g. wrapped in ```json fences, or an error message in prose.
+                except json.JSONDecodeError:
                     print(f"SCORER PARSE ERROR: '{item.get('name', 'Unknown')}' returned non-JSON.")
                     print(f"  Raw response (first 500 chars): {raw_response[:500]!r}")
                     break
+
+            except httpx.TimeoutException as e:
+                # Was previously falling into the generic `except Exception` below
+                # and giving up with zero retries. Timeouts are transient — retry
+                # them the same way as 429/503.
+                attempt += 1
+                backoff_time = 10.0 * attempt
+                print(f"SCORER TIMEOUT: '{item.get('name', 'Unknown')}' timed out ({type(e).__name__}).")
+                print(f"  Backing off for {backoff_time}s... (Attempt {attempt}/{max_retries})")
+                await asyncio.sleep(backoff_time)
+
             except httpx.HTTPStatusError as e:
                 status = e.response.status_code
                 body_preview = e.response.text[:500]
@@ -284,17 +331,7 @@ async def score_entities(cfg: Any, items: list[dict[str, Any]]) -> list[dict[str
 
                 if status in (429, 503):
                     attempt += 1
-                    # Prefer the server's own Retry-After header if present —
-                    # Google will sometimes tell you exactly how long to wait.
-                    retry_after = e.response.headers.get("Retry-After")
-                    if retry_after is not None:
-                        try:
-                            backoff_time = float(retry_after)
-                        except ValueError:
-                            backoff_time = 15.0 * attempt
-                    else:
-                        # Aggressive backoff: Attempt 1 = 15s, Attempt 2 = 30s, Attempt 3 = 45s
-                        backoff_time = 15.0 * attempt
+                    backoff_time = _extract_retry_delay(e.response) or (15.0 * attempt)
                     print(f"SCORER RETRY: Backing off for {backoff_time}s... (Attempt {attempt}/{max_retries})")
                     await asyncio.sleep(backoff_time)
                 else:

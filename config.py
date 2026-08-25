@@ -45,6 +45,7 @@ class LLMConfig(BaseModel):
 
 class StorageConfig(BaseModel):
     path: str = "output.json"
+    min_score: Optional[float] = None  # Results below this overall_score are filtered out before saving
 
 
 # ----------------------------

@@ -7,13 +7,13 @@ from config import load_config
 from adapters import get_adapter
 from scorer import score_entities
 from dedupe import dedupe
-from storage import store
+from storage import store, _get_overall_score
 
 
 def publish_results(cfg, scored: list[dict], publish_dir: str) -> None:
     """
     Writes the scored results out to a folder meant to be served as a static
-    site (e.g. GitHub Pages via /docs). Writes two files:
+    site (e.g. GitHub Pages via /docs or a subpage of it). Writes two files:
       - results.json       the scored entity data, read by index.html
       - results.meta.json  profile name/description/timestamp for the header
     Does NOT touch index.html itself — that stays hand-authored in the repo.
@@ -47,10 +47,20 @@ async def run_pipeline(config_path: str, publish_dir: str | None = None):
     unique = dedupe(items)
     scored = await score_entities(cfg, unique)
 
-    store(scored, cfg.storage.path)
+    store(scored, cfg.storage.path, min_score=cfg.storage.min_score)
 
     if publish_dir:
-        publish_results(cfg, scored, publish_dir)
+        # Publish uses the same min_score filter and sort order as the
+        # local save, applied fresh here since this receives the full
+        # `scored` list, not whatever store() already filtered internally.
+        publish_scored = scored
+        if cfg.storage.min_score is not None:
+            publish_scored = [
+                item for item in scored
+                if _get_overall_score(item) >= cfg.storage.min_score
+            ]
+        publish_scored = sorted(publish_scored, key=_get_overall_score, reverse=True)
+        publish_results(cfg, publish_scored, publish_dir)
 
     print(f"Fetched: {len(items)}")
     print(f"Unique: {len(unique)}")
@@ -69,7 +79,9 @@ def main():
         default=None,
         metavar="DIR",
         help="Also write results.json + results.meta.json for the static site. "
-             "Defaults to 'docs' if no directory is given (e.g. --publish or --publish site).",
+             "Defaults to 'docs' if no directory is given — pass a subfolder "
+             "(e.g. --publish docs/jobs) to publish to a subpage instead of "
+             "overwriting the homepage.",
     )
     args = parser.parse_args()
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any
+import asyncio
 import httpx
 from config import RootConfig
 
@@ -43,7 +44,6 @@ class GroqAdapter(BaseAdapter):
                 if isinstance(data, list):
                     return data
                 if isinstance(data, dict):
-                    # try to extract list from dict
                     for v in data.values():
                         if isinstance(v, list):
                             return v
@@ -135,6 +135,9 @@ class AdzunaAdapter(BaseAdapter):
     legitimate, ToS-compliant API — this avoids scraping LinkedIn/Indeed
     directly, which their own Terms of Service prohibit.
 
+    Retries on transient errors (503, 429, timeouts) with backoff, since
+    external job-board APIs occasionally have brief outages/blips.
+
     Expected source config:
         source:
           adapter: "adzuna"
@@ -157,15 +160,65 @@ class AdzunaAdapter(BaseAdapter):
         page = params.pop("page", 1)
         url = f"{base_url}/{country}/search/{page}"
 
-        async with httpx.AsyncClient(timeout=15) as client:
+        # `what` can be a single string (one search) or a list of strings
+        # (one search per title, results merged). Running separate searches
+        # per title is more reliable than trying to cram multiple job titles
+        # into Adzuna's single `what` field, which does an AND-style match
+        # rather than "any of these titles."
+        what_value = params.pop("what", None)
+        what_list = what_value if isinstance(what_value, list) else [what_value]
+
+        all_results: list[dict[str, Any]] = []
+        async with httpx.AsyncClient(timeout=20) as client:
+            for title in what_list:
+                query_params = dict(params)
+                if title is not None:
+                    query_params["what"] = title
+                page_results = await self._fetch_one(client, url, query_params, title)
+                all_results.extend(page_results)
+
+        return all_results
+
+    async def _fetch_one(self, client: httpx.AsyncClient, url: str,
+                          query_params: dict, title_label: Any) -> list[dict[str, Any]]:
+        max_retries = 3
+        attempt = 0
+
+        while attempt < max_retries:
             try:
-                resp = await client.get(url, params=params)
+                resp = await client.get(url, params=query_params)
                 resp.raise_for_status()
                 data = resp.json()
+                return self._normalize(data)
+
+            except httpx.HTTPStatusError as e:
+                status = e.response.status_code
+                if status in (429, 503):
+                    attempt += 1
+                    backoff_time = 10.0 * attempt
+                    print(f"ADZUNA RETRY ('{title_label}'): Got status {status}. "
+                          f"Backing off for {backoff_time}s... (Attempt {attempt}/{max_retries})")
+                    await asyncio.sleep(backoff_time)
+                else:
+                    print(f"ADZUNA ADAPTER ERROR ('{title_label}'): Unrecoverable status {status}: {e}")
+                    return []
+
+            except httpx.TimeoutException as e:
+                attempt += 1
+                backoff_time = 10.0 * attempt
+                print(f"ADZUNA TIMEOUT ('{title_label}'): {type(e).__name__}. "
+                      f"Backing off for {backoff_time}s... (Attempt {attempt}/{max_retries})")
+                await asyncio.sleep(backoff_time)
+
             except Exception as e:
-                print("ADZUNA ADAPTER ERROR:", e)
+                print(f"ADZUNA ADAPTER ERROR ('{title_label}'):", e)
                 return []
 
+        print(f"ADZUNA FATAL ('{title_label}'): Giving up after {max_retries} attempts.")
+        return []
+
+    @staticmethod
+    def _normalize(data: dict) -> list[dict[str, Any]]:
         results = data.get("results", [])
         normalized = []
         for job in results:
