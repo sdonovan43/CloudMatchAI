@@ -9,7 +9,7 @@
         "salary_max": 190452.64,
         "contract_type": null,
         "category": "IT Jobs",
-        "url": "https://www.adzuna.com/land/ad/5831558696?se=tjV7FHOg8RGBoY1wkdWDcQ&utm_medium=api&utm_source=27a16173&v=7DDA29A92A0FDC67FB91A9B6A7E08C2F780B6959",
+        "url": "https://www.adzuna.com/land/ad/5831558696?se=opG14XOg8RG9fPhhRXCYyA&utm_medium=api&utm_source=27a16173&v=7DDA29A92A0FDC67FB91A9B6A7E08C2F780B6959",
         "_match_analysis": {
             "scores": {
                 "skills_match": {
@@ -18,7 +18,7 @@
                 },
                 "experience_match": {
                     "score": 0.8,
-                    "reasoning": "The candidate's principal-level background in enterprise data ecosystems is highly relevant for a senior-level role supporting mission-critical government health data platforms."
+                    "reasoning": "The candidate's principal-level background in enterprise data ecosystems is highly relevant for a mission-critical VA healthcare platform architecture role."
                 },
                 "location_fit": {
                     "score": 1.0,
@@ -26,7 +26,7 @@
                 },
                 "compensation_signal": {
                     "score": 0.9,
-                    "reasoning": "The salary of $190,452 is highly competitive and aligns with the expectations for a principal-level cloud architect role."
+                    "reasoning": "The fixed salary of $190,452 is a strong, transparent signal that aligns with principal-level expectations in the current market."
                 }
             },
             "overall_score": 0.8725
@@ -42,60 +42,60 @@
         "salary_max": 179320.42,
         "contract_type": null,
         "category": "IT Jobs",
-        "url": "https://www.adzuna.com/land/ad/5823216922?se=ujmvFHOg8RGBoY1wkdWDcQ&utm_medium=api&utm_source=27a16173&v=F69A0C96272123699B4EEB8AA6BA702C20966ABA",
+        "url": "https://www.adzuna.com/land/ad/5823216922?se=PlXY4XOg8RG3PIBRRiQSeA&utm_medium=api&utm_source=27a16173&v=F69A0C96272123699B4EEB8AA6BA702C20966ABA",
         "_match_analysis": {
             "scores": {
                 "skills_match": {
-                    "score": 0.7,
-                    "reasoning": "The role aligns with the candidate's architecture expertise, though it lacks specific mention of the modern Azure/Fabric stack the candidate specializes in."
+                    "score": 0.75,
+                    "reasoning": "The role aligns well with the candidate's expertise in data architecture, though the specific tech stack details are less explicit than the candidate's deep Azure/Fabric specialization."
                 },
                 "experience_match": {
                     "score": 0.8,
-                    "reasoning": "The candidate's principal-level background is a strong match for a Manager/Architect role in a large enterprise environment."
+                    "reasoning": "The Manager/Architect level is a strong fit for a Principal-level candidate looking to lead enterprise data ecosystems."
                 },
                 "location_fit": {
                     "score": 1.0,
-                    "reasoning": "The job is explicitly listed as a remote role, which perfectly matches the candidate's requirement."
+                    "reasoning": "The role is explicitly listed as remote, which perfectly matches the candidate's primary requirement."
                 },
                 "compensation_signal": {
-                    "score": 0.85,
-                    "reasoning": "The salary of approximately $179k is highly competitive and aligns well with principal-level data engineering expectations."
+                    "score": 0.7,
+                    "reasoning": "The salary of approximately $179k is competitive for a senior/principal role, though it may be on the lower end for high-end consulting or specialized cloud architecture roles."
                 }
             },
-            "overall_score": 0.8075
+            "overall_score": 0.7925
         }
     },
     {
-        "name": "Data Engineer Remote Location — Sierra Business Solution LLC",
-        "title": "Data Engineer Remote Location",
-        "company": "Sierra Business Solution LLC",
-        "location": "US",
-        "description": "Job Description: Synapse, Scala, SparkPySpark, SQL, Scope, CosmosADLS, Secondary and immediate skills Kusto Microsoft FabricOneLake",
-        "salary_min": 127550,
-        "salary_max": 127550,
+        "name": "Senior Cloud Architect - Remote — ICF International, Inc.",
+        "title": "Senior Cloud Architect - Remote",
+        "company": "ICF International, Inc.",
+        "location": "Reston, Fairfax County",
+        "description": "This role is contingent upon a contract award. ICF is seeking an experienced Cloud Architect to provide senior technical leadership across enterprise architecture, platform integration, application modernization, product delivery, and sustainment for a complex federal technology services program. This role will guide solution design and delivery across modern SaaS, cloud, automation, integration, DevSecOps, and product engineering environments. The ideal candidate has demonstrated experience le…",
+        "salary_min": 409255.25,
+        "salary_max": 409255.25,
         "contract_type": null,
         "category": "IT Jobs",
-        "url": "https://www.adzuna.com/land/ad/5854712574?se=kJRMFHOg8RG3PIBRRiQSeA&utm_medium=api&utm_source=27a16173&v=D67BDD7AC3E425E35C67D1827DE896F77BD01F50",
+        "url": "https://www.adzuna.com/land/ad/5848204958?se=opG14XOg8RG9fPhhRXCYyA&utm_medium=api&utm_source=27a16173&v=BBF966EA06170773C2B6B284EB445A33BB10BB83",
         "_match_analysis": {
             "scores": {
                 "skills_match": {
-                    "score": 0.85,
-                    "reasoning": "The role aligns well with the candidate's expertise in Synapse, Fabric, OneLake, and ADLS, though it lacks explicit mention of the candidate's deeper architectural and AI-specific skill sets."
+                    "score": 0.6,
+                    "reasoning": "The role focuses on general cloud architecture and DevSecOps, which aligns with the candidate's background, but lacks specific emphasis on the candidate's deep expertise in Microsoft Fabric and Azure data ecosystems."
                 },
                 "experience_match": {
-                    "score": 0.6,
-                    "reasoning": "The role is titled 'Data Engineer' rather than 'Principal Data Engineer,' suggesting it may be below the candidate's seniority level."
+                    "score": 0.7,
+                    "reasoning": "The candidate's principal-level experience in enterprise architecture and modernization is a strong match for the senior leadership requirements of this federal technology services role."
                 },
                 "location_fit": {
-                    "score": 1.0,
-                    "reasoning": "The role is explicitly listed as remote within the US, which perfectly matches the candidate's requirement."
+                    "score": 0.8,
+                    "reasoning": "The job is listed as remote, which aligns perfectly with the candidate's preference for remote work, despite the company's physical location in Reston."
                 },
                 "compensation_signal": {
-                    "score": 0.5,
-                    "reasoning": "The salary of $127,550 is likely below the market expectation for a Principal-level Data Engineer and Cloud Architect."
+                    "score": 1.0,
+                    "reasoning": "The salary provided is exceptionally high and well above market expectations for a principal-level role, providing a very strong positive signal."
                 }
             },
-            "overall_score": 0.7375
+            "overall_score": 0.745
         }
     },
     {
@@ -132,36 +132,69 @@
         }
     },
     {
-        "name": "Senior Cloud Architect - Remote — ICF International, Inc.",
-        "title": "Senior Cloud Architect - Remote",
-        "company": "ICF International, Inc.",
-        "location": "Reston, Fairfax County",
-        "description": "This role is contingent upon a contract award. ICF is seeking an experienced Cloud Architect to provide senior technical leadership across enterprise architecture, platform integration, application modernization, product delivery, and sustainment for a complex federal technology services program. This role will guide solution design and delivery across modern SaaS, cloud, automation, integration, DevSecOps, and product engineering environments. The ideal candidate has demonstrated experience le…",
-        "salary_min": 409255.25,
-        "salary_max": 409255.25,
+        "name": "Data Engineer Remote Location — Sierra Business Solution LLC",
+        "title": "Data Engineer Remote Location",
+        "company": "Sierra Business Solution LLC",
+        "location": "US",
+        "description": "Job Description: Synapse, Scala, SparkPySpark, SQL, Scope, CosmosADLS, Secondary and immediate skills Kusto Microsoft FabricOneLake",
+        "salary_min": 127550,
+        "salary_max": 127550,
         "contract_type": null,
         "category": "IT Jobs",
-        "url": "https://www.adzuna.com/land/ad/5848204958?se=tjV7FHOg8RGBoY1wkdWDcQ&utm_medium=api&utm_source=27a16173&v=BBF966EA06170773C2B6B284EB445A33BB10BB83",
+        "url": "https://www.adzuna.com/land/ad/5854712574?se=RHmV4XOg8RG_lI43IzQKFA&utm_medium=api&utm_source=27a16173&v=D67BDD7AC3E425E35C67D1827DE896F77BD01F50",
+        "_match_analysis": {
+            "scores": {
+                "skills_match": {
+                    "score": 0.8,
+                    "reasoning": "The role aligns well with the candidate's expertise in Synapse, ADLS, and Microsoft Fabric, though it lacks explicit mention of the candidate's deeper architectural and AI-specific skill sets."
+                },
+                "experience_match": {
+                    "score": 0.6,
+                    "reasoning": "The role is titled 'Data Engineer' rather than 'Principal Data Engineer', suggesting it may be below the candidate's seniority level."
+                },
+                "location_fit": {
+                    "score": 1.0,
+                    "reasoning": "The role is explicitly listed as remote within the US, which perfectly matches the candidate's requirement."
+                },
+                "compensation_signal": {
+                    "score": 0.5,
+                    "reasoning": "The salary of $127,550 is likely below the market expectation for a Principal-level Data Engineer and Cloud Architect."
+                }
+            },
+            "overall_score": 0.725
+        }
+    },
+    {
+        "name": "Senior Cloud Architect - Remote with Security Clearance — ICF Consulting Group, Inc.",
+        "title": "Senior Cloud Architect - Remote with Security Clearance",
+        "company": "ICF Consulting Group, Inc.",
+        "location": "Reston, Fairfax County",
+        "description": "Description This role is contingent upon a contract award. ICF is seeking an experienced Cloud Architect to provide senior technical leadership across enterprise architecture, platform integration, application modernization, product delivery, and sustainment for a complex federal technology services program. This role will guide solution design and delivery across modern SaaS, cloud, automation, integration, DevSecOps, and product engineering environments. The ideal candidate has demonstrated e…",
+        "salary_min": 216885.05,
+        "salary_max": 216885.05,
+        "contract_type": null,
+        "category": "IT Jobs",
+        "url": "https://www.adzuna.com/land/ad/5740560709?se=opG14XOg8RG9fPhhRXCYyA&utm_medium=api&utm_source=27a16173&v=939F26D792967DC30466A780B2D56CC4296C9346",
         "_match_analysis": {
             "scores": {
                 "skills_match": {
                     "score": 0.6,
-                    "reasoning": "The role focuses on general cloud architecture and application modernization, which aligns with the candidate's background, though it lacks specific emphasis on the candidate's core Microsoft Fabric and Azure data engineering stack."
+                    "reasoning": "The role aligns with the candidate's cloud architecture and modernization expertise, though it lacks specific mention of the candidate's deep Azure data stack and Microsoft Fabric specialization."
                 },
                 "experience_match": {
                     "score": 0.7,
-                    "reasoning": "The candidate's principal-level experience in enterprise architecture and modernization is a strong fit for the senior leadership requirements of this federal technology services role."
+                    "reasoning": "The candidate's principal-level background in consulting and enterprise architecture is a strong match for this senior leadership role."
                 },
                 "location_fit": {
                     "score": 0.5,
-                    "reasoning": "While the title mentions remote, the location is listed as Reston, and federal contract roles often have residency or proximity requirements that may conflict with the candidate's preference for fully remote work."
+                    "reasoning": "While listed as remote, the requirement for a security clearance often implies proximity to federal hubs or specific residency requirements that may conflict with a purely remote preference."
                 },
                 "compensation_signal": {
-                    "score": 1.0,
-                    "reasoning": "The salary provided is exceptionally high and well above market expectations for a principal-level role, providing a very strong positive signal."
+                    "score": 0.9,
+                    "reasoning": "The salary of $216,885 is highly competitive and aligns well with principal-level expectations in the consulting sector."
                 }
             },
-            "overall_score": 0.705
+            "overall_score": 0.685
         }
     },
     {
@@ -198,39 +231,6 @@
         }
     },
     {
-        "name": "Senior Cloud Architect - Remote with Security Clearance — ICF Consulting Group, Inc.",
-        "title": "Senior Cloud Architect - Remote with Security Clearance",
-        "company": "ICF Consulting Group, Inc.",
-        "location": "Reston, Fairfax County",
-        "description": "Description This role is contingent upon a contract award. ICF is seeking an experienced Cloud Architect to provide senior technical leadership across enterprise architecture, platform integration, application modernization, product delivery, and sustainment for a complex federal technology services program. This role will guide solution design and delivery across modern SaaS, cloud, automation, integration, DevSecOps, and product engineering environments. The ideal candidate has demonstrated e…",
-        "salary_min": 216885.05,
-        "salary_max": 216885.05,
-        "contract_type": null,
-        "category": "IT Jobs",
-        "url": "https://www.adzuna.com/land/ad/5740560709?se=tjV7FHOg8RGBoY1wkdWDcQ&utm_medium=api&utm_source=27a16173&v=939F26D792967DC30466A780B2D56CC4296C9346",
-        "_match_analysis": {
-            "scores": {
-                "skills_match": {
-                    "score": 0.6,
-                    "reasoning": "The role aligns with the candidate's cloud architecture and modernization expertise, though it lacks specific mention of the candidate's core Azure Data/Fabric stack."
-                },
-                "experience_match": {
-                    "score": 0.7,
-                    "reasoning": "The candidate's principal-level background in consulting and enterprise architecture is a strong fit for this senior-level federal consulting role."
-                },
-                "location_fit": {
-                    "score": 0.4,
-                    "reasoning": "The role is listed as remote but requires a security clearance, which often implies proximity to federal hubs or specific residency requirements that may conflict with a purely remote goal."
-                },
-                "compensation_signal": {
-                    "score": 0.9,
-                    "reasoning": "The salary of $216,885 is highly competitive and aligns well with principal-level expectations in the consulting sector."
-                }
-            },
-            "overall_score": 0.655
-        }
-    },
-    {
         "name": "Data Engineer (Remote) — ICF",
         "title": "Data Engineer (Remote)",
         "company": "ICF",
@@ -240,27 +240,93 @@
         "salary_max": 129979.64,
         "contract_type": null,
         "category": "IT Jobs",
-        "url": "https://www.adzuna.com/land/ad/5797620098?se=kJRMFHOg8RG3PIBRRiQSeA&utm_medium=api&utm_source=27a16173&v=5E634CA67DAF4E588EB2502FB788A18417884E6E",
+        "url": "https://www.adzuna.com/land/ad/5797620098?se=RHmV4XOg8RG_lI43IzQKFA&utm_medium=api&utm_source=27a16173&v=5E634CA67DAF4E588EB2502FB788A18417884E6E",
         "_match_analysis": {
             "scores": {
                 "skills_match": {
                     "score": 0.4,
-                    "reasoning": "The role focuses on legacy modernization and API integration, which aligns with the candidate's background, but lacks the depth in Azure data engineering and Fabric-specific architecture expected for a principal-level role."
+                    "reasoning": "The role focuses on legacy modernization and API integration (MuleSoft), which overlaps with the candidate's background, but lacks the deep Azure/Fabric/Data Engineering stack the candidate specializes in."
                 },
                 "experience_match": {
                     "score": 0.5,
-                    "reasoning": "The role requires leading large-scale migrations, which fits the candidate's principal-level experience, though the scope appears more focused on document management than complex data engineering."
+                    "reasoning": "The role requires leading large-scale modernization, which aligns with the candidate's principal-level experience, though the specific technical focus is more document-centric than data-centric."
                 },
                 "location_fit": {
                     "score": 1.0,
-                    "reasoning": "The job is explicitly listed as remote, which perfectly aligns with the candidate's requirement."
+                    "reasoning": "The role is explicitly listed as remote, which perfectly aligns with the candidate's requirement."
                 },
                 "compensation_signal": {
                     "score": 0.6,
-                    "reasoning": "The salary is fixed at approximately 130k, which is likely below the market rate for a Principal Data Engineer/Architect role."
+                    "reasoning": "The salary is fixed at approximately 130k, which is likely below the market rate for a Principal-level Data Architect/Engineer."
                 }
             },
             "overall_score": 0.585
+        }
+    },
+    {
+        "name": "Data Solution Architect || Remote — Vbeyond Corporation",
+        "title": "Data Solution Architect || Remote",
+        "company": "Vbeyond Corporation",
+        "location": "Pennsylvania, US",
+        "description": "Job Summary We are seeking an experienced Solution Architect with expertise in Databricks, PySpark, and AWS to design and implement scalable cloud-based data solutions . The ideal candidate will have strong architecture, data engineering, and cloud platform experience. Key Responsibilities Design end-to-end data architecture using Databricks and AWS. Build scalable data pipelines using PySpark. Lead cloud migration and modernization initiatives. Collaborate with business stakeholders and techni…",
+        "salary_min": 153423.02,
+        "salary_max": 153423.02,
+        "contract_type": null,
+        "category": "IT Jobs",
+        "url": "https://www.adzuna.com/land/ad/5786025227?se=PlXY4XOg8RG3PIBRRiQSeA&utm_medium=api&utm_source=27a16173&v=CD02090C285E41AF5F305F715EEAFBE109CCE106",
+        "_match_analysis": {
+            "scores": {
+                "skills_match": {
+                    "score": 0.3,
+                    "reasoning": "The role focuses on AWS and Databricks/PySpark, which are outside the candidate's core expertise in the Microsoft Azure and Fabric ecosystem."
+                },
+                "experience_match": {
+                    "score": 0.5,
+                    "reasoning": "The candidate has strong principal-level architecture experience, but the specific technical stack (AWS vs Azure) creates a significant gap in immediate productivity."
+                },
+                "location_fit": {
+                    "score": 1.0,
+                    "reasoning": "The role is explicitly listed as remote, which aligns perfectly with the candidate's requirement."
+                },
+                "compensation_signal": {
+                    "score": 0.8,
+                    "reasoning": "The salary is transparent and falls within a competitive range for a principal-level data architecture role."
+                }
+            },
+            "overall_score": 0.575
+        }
+    },
+    {
+        "name": "Lead Data Engineer (Remote) — 8th Light",
+        "title": "Lead Data Engineer (Remote)",
+        "company": "8th Light",
+        "location": "US",
+        "description": "hackajob is collaborating with 8th Light to connect them with exceptional professionals for this role. Who We Are At 8th Light, we bring life to the best ideas. Founded in 2006 and headquartered in Chicago, we are a technology solutions consultancy that partners with organizations from early-stage startups to the world's largest companies. We take on hard software challenges and turn them into durable results. We build agentic products, the platforms they run on, and the engineering and design …",
+        "salary_min": 90053.33,
+        "salary_max": 90053.33,
+        "contract_type": null,
+        "category": "Engineering Jobs",
+        "url": "https://www.adzuna.com/land/ad/5843057626?se=RHmV4XOg8RG_lI43IzQKFA&utm_medium=api&utm_source=27a16173&v=7837E4716ECE536E8BB2C7CE52D5B78F159D23E4",
+        "_match_analysis": {
+            "scores": {
+                "skills_match": {
+                    "score": 0.4,
+                    "reasoning": "The role is a general software engineering consultancy position, lacking the specific focus on Azure data ecosystems, Fabric, and data architecture that defines the candidate's expertise."
+                },
+                "experience_match": {
+                    "score": 0.5,
+                    "reasoning": "The candidate is a Principal-level architect, while this role is a Lead Data Engineer position, which is a step down in seniority and scope."
+                },
+                "location_fit": {
+                    "score": 1.0,
+                    "reasoning": "The role is explicitly listed as remote, which aligns perfectly with the candidate's target."
+                },
+                "compensation_signal": {
+                    "score": 0.2,
+                    "reasoning": "The salary range provided is significantly below market expectations for a Principal-level Data Architect role."
+                }
+            },
+            "overall_score": 0.495
         }
     },
     {
@@ -273,7 +339,7 @@
         "salary_max": 197027.61,
         "contract_type": null,
         "category": "IT Jobs",
-        "url": "https://www.adzuna.com/land/ad/5770045001?se=ujmvFHOg8RGBoY1wkdWDcQ&utm_medium=api&utm_source=27a16173&v=348338B2474B61B56CADD8AEB40676E8632D7A20",
+        "url": "https://www.adzuna.com/land/ad/5770045001?se=PlXY4XOg8RG3PIBRRiQSeA&utm_medium=api&utm_source=27a16173&v=348338B2474B61B56CADD8AEB40676E8632D7A20",
         "_match_analysis": {
             "scores": {
                 "skills_match": {
@@ -293,73 +359,7 @@
                     "reasoning": "The salary of approximately $197k is competitive and aligns with expectations for a principal-level data architecture role."
                 }
             },
-            "overall_score": 0.515
-        }
-    },
-    {
-        "name": "Data Solution Architect || Remote — Vbeyond Corporation",
-        "title": "Data Solution Architect || Remote",
-        "company": "Vbeyond Corporation",
-        "location": "Pennsylvania, US",
-        "description": "Job Summary We are seeking an experienced Solution Architect with expertise in Databricks, PySpark, and AWS to design and implement scalable cloud-based data solutions . The ideal candidate will have strong architecture, data engineering, and cloud platform experience. Key Responsibilities Design end-to-end data architecture using Databricks and AWS. Build scalable data pipelines using PySpark. Lead cloud migration and modernization initiatives. Collaborate with business stakeholders and techni…",
-        "salary_min": 153423.02,
-        "salary_max": 153423.02,
-        "contract_type": null,
-        "category": "IT Jobs",
-        "url": "https://www.adzuna.com/land/ad/5786025227?se=ujmvFHOg8RGBoY1wkdWDcQ&utm_medium=api&utm_source=27a16173&v=CD02090C285E41AF5F305F715EEAFBE109CCE106",
-        "_match_analysis": {
-            "scores": {
-                "skills_match": {
-                    "score": 0.3,
-                    "reasoning": "The role focuses on AWS and Databricks/PySpark, which are outside the candidate's core expertise in the Microsoft Azure and Fabric ecosystem."
-                },
-                "experience_match": {
-                    "score": 0.4,
-                    "reasoning": "While the candidate has the required principal-level architecture experience, the technical stack mismatch significantly limits the transferability of their specific skills."
-                },
-                "location_fit": {
-                    "score": 0.8,
-                    "reasoning": "The role is listed as remote, which aligns with the candidate's preference, though the company is based in Pennsylvania."
-                },
-                "compensation_signal": {
-                    "score": 0.7,
-                    "reasoning": "The salary is transparent and falls within a competitive range for a principal-level data architecture role."
-                }
-            },
             "overall_score": 0.495
-        }
-    },
-    {
-        "name": "Lead Data Engineer (Remote) — 8th Light",
-        "title": "Lead Data Engineer (Remote)",
-        "company": "8th Light",
-        "location": "US",
-        "description": "hackajob is collaborating with 8th Light to connect them with exceptional professionals for this role. Who We Are At 8th Light, we bring life to the best ideas. Founded in 2006 and headquartered in Chicago, we are a technology solutions consultancy that partners with organizations from early-stage startups to the world's largest companies. We take on hard software challenges and turn them into durable results. We build agentic products, the platforms they run on, and the engineering and design …",
-        "salary_min": 90053.33,
-        "salary_max": 90053.33,
-        "contract_type": null,
-        "category": "Engineering Jobs",
-        "url": "https://www.adzuna.com/land/ad/5843057626?se=kJRMFHOg8RG3PIBRRiQSeA&utm_medium=api&utm_source=27a16173&v=7837E4716ECE536E8BB2C7CE52D5B78F159D23E4",
-        "_match_analysis": {
-            "scores": {
-                "skills_match": {
-                    "score": 0.4,
-                    "reasoning": "The role is a general software consultancy position rather than a specialized Azure/Fabric data architecture role, missing the candidate's core stack."
-                },
-                "experience_match": {
-                    "score": 0.5,
-                    "reasoning": "The role is a Lead level, which aligns with the candidate's Principal background, but the focus on general software engineering is less specialized than the candidate's profile."
-                },
-                "location_fit": {
-                    "score": 1.0,
-                    "reasoning": "The role is explicitly listed as remote, which perfectly matches the candidate's requirement."
-                },
-                "compensation_signal": {
-                    "score": 0.2,
-                    "reasoning": "The salary of ~$90k is significantly below the market rate for a Principal Data Engineer/Architect role."
-                }
-            },
-            "overall_score": 0.485
         }
     }
 ]
