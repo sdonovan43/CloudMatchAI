@@ -1,0 +1,21 @@
+source:
+  adapter: "static"
+  url: "localhost"
+  method: "GET"
+  headers: {}
+  params: {}
+
+profile:
+  name: "Local Test Profile"
+  description: "Smoke test profile for validation of the Ollama local LLM scoring pipeline."
+  criteria:
+    compute: 0.50
+    storage: 0.50
+
+llm:
+  provider: "ollama"
+  model: "qwen3-coder:30b"  # Using the specific model you requested
+  endpoint: "http://localhost:11434"  # Default Ollama endpoint
+
+storage:
+  path: "output_test_ollama.json"

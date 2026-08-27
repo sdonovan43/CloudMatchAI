@@ -1,0 +1,5 @@
+# Project Architecture Overview
+- **Core Engine:** Driven by `config.py` (Pydantic validation) and `cli.py` (runner).
+- **Scoring:** Executed via `scorer.py` using weighted YAML criteria.
+- **Data Sources:** Extending logic should happen inside `adapters.py`.
+- **Strict Rules:** Do not touch code in `legacy_v1/`. Keep runtime logs isolated in `logs/`.

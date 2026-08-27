@@ -25,9 +25,10 @@ class BaseLLMProvider:
 
 class OpenAIProvider(BaseLLMProvider):
     async def chat(self, messages: list[dict]) -> str:
+        endpoint = (self.cfg.llm.endpoint or "https://api.openai.com/v1").rstrip("/")
         async with httpx.AsyncClient(timeout=60) as client:
             resp = await client.post(
-                f"{self.cfg.llm.endpoint}/chat/completions",
+                f"{endpoint}/chat/completions",
                 headers={"Authorization": f"Bearer {self.cfg.llm.api_key}"},
                 json={
                     "model": self.cfg.llm.model,
@@ -46,9 +47,10 @@ class OpenAIProvider(BaseLLMProvider):
 
 class GroqProvider(BaseLLMProvider):
     async def chat(self, messages: list[dict]) -> str:
+        endpoint = (self.cfg.llm.endpoint or "https://api.groq.com/openai/v1").rstrip("/")
         async with httpx.AsyncClient(timeout=60) as client:
             resp = await client.post(
-                f"{self.cfg.llm.endpoint}/chat/completions",
+                f"{endpoint}/chat/completions",
                 headers={"Authorization": f"Bearer {self.cfg.llm.api_key}"},
                 json={
                     "model": self.cfg.llm.model,
@@ -68,9 +70,13 @@ class GroqProvider(BaseLLMProvider):
 
 class AzureOpenAIProvider(BaseLLMProvider):
     async def chat(self, messages: list[dict]) -> str:
+        endpoint = self.cfg.llm.endpoint
+        if not endpoint:
+            raise ValueError("Azure OpenAI provider requires 'endpoint' to be set in configuration.")
+        endpoint = endpoint.rstrip("/")
         async with httpx.AsyncClient(timeout=60) as client:
             resp = await client.post(
-                f"{self.cfg.llm.endpoint}/openai/deployments/{self.cfg.llm.model}/chat/completions?api-version=2024-02-01",
+                f"{endpoint}/openai/deployments/{self.cfg.llm.model}/chat/completions?api-version=2024-02-01",
                 headers={"api-key": self.cfg.llm.api_key},
                 json={
                     "messages": messages,
@@ -88,9 +94,10 @@ class AzureOpenAIProvider(BaseLLMProvider):
 
 class OllamaProvider(BaseLLMProvider):
     async def chat(self, messages: list[dict]) -> str:
+        endpoint = (self.cfg.llm.endpoint or "http://localhost:11434").rstrip("/")
         async with httpx.AsyncClient(timeout=60) as client:
             resp = await client.post(
-                f"{self.cfg.llm.endpoint}/chat",
+                f"{endpoint}/chat",
                 json={
                     "model": self.cfg.llm.model,
                     "messages": messages,

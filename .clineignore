@@ -1,0 +1,12 @@
+# Sensitive credentials
+.env
+*.pem
+
+# Large or build folders
+__pycache__/
+logs/
+docs/
+.git/
+node_modules/
+legacy_v1
+.pytest_cache

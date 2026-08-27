@@ -41,13 +41,29 @@ def publish_results(cfg, scored: list[dict], publish_dir: str) -> None:
 async def run_pipeline(config_path: str, publish_dir: str | None = None):
     cfg = load_config(config_path)
 
+    print("\n", "="*60)
+    print(f"CloudMatchAI v2 Pipeline Execution")
+    print("="*60)
+    print(f"Profile: {cfg.profile.name}")
+    print(f"Description: {cfg.profile.description[:80]}{'...' if len(cfg.profile.description) > 80 else ''}")
+    print("="*60)
+
     adapter = get_adapter(cfg)
+    print("\n📥 Fetching data...")
     items = await adapter.fetch()
+    print(f"✅ Fetched {len(items)} items from {cfg.source.adapter} source")
 
+    print("\n🔍 Deduplicating entities...")
     unique = dedupe(items)
-    scored = await score_entities(cfg, unique)
+    print(f"✅ Deduplication complete: {len(unique)} unique items")
 
+    print("\n🧠 Scoring items with LLM...")
+    scored = await score_entities(cfg, unique)
+    print(f"✅ Scoring complete: {len(scored)} items scored")
+
+    print("\n💾 Saving results...")
     store(scored, cfg.storage.path, min_score=cfg.storage.min_score)
+    print(f"✅ Results saved to '{cfg.storage.path}'")
 
     if publish_dir:
         # Publish uses the same min_score filter and sort order as the
@@ -61,10 +77,34 @@ async def run_pipeline(config_path: str, publish_dir: str | None = None):
             ]
         publish_scored = sorted(publish_scored, key=_get_overall_score, reverse=True)
         publish_results(cfg, publish_scored, publish_dir)
+        print(f"✅ Published results to '{publish_dir}'")
 
-    print(f"Fetched: {len(items)}")
-    print(f"Unique: {len(unique)}")
-    print(f"Scored: {len(scored)}")
+    print("\n" + "="*60)
+    print("📊 PIPELINE SUMMARY")
+    print("="*60)
+    print(f"📥 Fetched:  {len(items):>5} items")
+    print(f"🔍 Deduped:  {len(unique):>5} items")  
+    print(f"🧠 Scored:   {len(scored):>5} items")
+    print("="*60)
+
+    # Show top 3 results if any scored items exist
+    if scored:
+        print("\n🏆 TOP SCORED RESULTS")
+        print("─"*60)
+        for i, item in enumerate(scored[:3]):  # Show top 3
+            analysis = item.get('_match_analysis', {})
+            score = analysis.get('overall_score', -1)
+            if score >= 0:
+                print(f"{i+1}. {item.get('name', 'Unknown')}")
+                print(f"   Score: {score:.2f}")
+                # Show key criteria scores in a compact way
+                scores = analysis.get('scores', {})
+                if scores:
+                    score_items = [f'{k}: {v:.1f}' for k, v in list(scores.items())[:3]]  # Show first 3 criteria
+                    print(f"   Criteria: {', '.join(score_items)}")
+            else:
+                print(f"   Error: {analysis.get('error', 'Unknown error')}")
+            print()
 
 
 def main():

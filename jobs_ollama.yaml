@@ -77,10 +77,10 @@ candidate:
     and consulting sectors. Certifications: DP-900 (Microsoft Azure Data Fundamentals).
 
 llm:
-  provider: gemini
-  model: gemini-3.1-flash-lite
-  api_key: ${GEMINI_API_KEY}
+  provider: ollama
+  model: qwen3-coder:30b  # Using the specific model you requested
+  endpoint: "http://localhost:11434"  # Default Ollama endpoint
 
 storage:
-  path: output_jobs.json
+  path: output_jobs_ollama.json
   min_score: 0.4

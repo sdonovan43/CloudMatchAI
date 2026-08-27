@@ -225,6 +225,9 @@ class AdzunaAdapter(BaseAdapter):
             title = job.get("title", "").strip()
             company = (job.get("company") or {}).get("display_name", "Unknown")
             location = (job.get("location") or {}).get("display_name", "")
+            category_val = job.get("category")
+            category = category_val.get("label") if isinstance(category_val, dict) else category_val
+
             normalized.append({
                 "name": f"{title} — {company}",
                 "title": title,
@@ -234,7 +237,7 @@ class AdzunaAdapter(BaseAdapter):
                 "salary_min": job.get("salary_min"),
                 "salary_max": job.get("salary_max"),
                 "contract_type": job.get("contract_type"),
-                "category": (job.get("category") or {}).get("label"),
+                "category": category,
                 "url": job.get("redirect_url"),
             })
         return normalized
