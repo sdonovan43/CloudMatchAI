@@ -7,15 +7,16 @@ source:
 
 profile:
   name: "Local Test Profile"
-  description: "Smoke test profile for validation of the Gemini adaptive scoring pipeline."
+  description: "Smoke test profile for validation of the Ollama local LLM scoring pipeline."
   criteria:
     compute: 0.50
     storage: 0.50
 
 llm:
-  provider: "gemini"
-  model: "gemini-2.5-flash"
-  api_key: "${GEMINI_API_KEY}"
+  provider: "ollama"
+  model: "qwen3-coder:30b"  # Using the specific model you requested
+  endpoint: "http://localhost:11434"  # Default Ollama endpoint
+  api_key: ""  # Ollama doesn't use API keys, but schema requires this field
 
 storage:
   path: "output_test.json"

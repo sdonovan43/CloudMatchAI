@@ -1,0 +1,32 @@
+source:
+  adapter: "aws"
+  url: "https://api.amazonaws.com/jobs"
+  method: "GET"
+  headers: {}
+  params: {}
+
+profile:
+  name: Test AWS Job Match
+  description: Test matching jobs against AWS provider data
+  criteria:
+    skills_match: 0.35
+    experience_match: 0.30
+    location_fit: 0.15
+    compensation_signal: 0.20
+
+candidate:
+  summary: Test candidate for cloud jobs
+  skills:
+    - "AWS"
+    - "Cloud Architecture"
+  experience_years: 5
+  experience_summary: Test experience
+
+llm:
+  provider: "gemini"
+  model: "gemini-2.5-flash"
+  api_key: "${GEMINI_API_KEY}"
+
+storage:
+  path: "output_aws_jobs.json"
+  min_score: 0.4

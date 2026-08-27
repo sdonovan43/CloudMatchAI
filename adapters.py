@@ -244,6 +244,93 @@ class AdzunaAdapter(BaseAdapter):
 
 
 # ============================
+#       AWS ADAPTER
+# ============================
+
+class AWSAdapter(BaseAdapter):
+    """
+    Adapter for fetching AWS job listings from public sources.
+    Returns sample data formatted to match existing CloudMatchAI job structure.
+    """
+    
+    async def fetch(self) -> list[dict[str, Any]]:
+        # This would use AWS job APIs with specific search parameters
+        # Sample data in the same format as used by AdzunaAdapter in jobs.match.yaml
+        return [
+            {
+                "name": "AWS Cloud Solutions Architect - Senior",
+                "title": "Senior Cloud Solutions Architect",
+                "company": "Amazon Web Services",
+                "location": "Remote",
+                "description": "Design and implement scalable cloud solutions on AWS. Experience required with EC2, S3, Lambda, RDS, and IAM.",
+                "salary_min": 140000,
+                "salary_max": 180000,
+                "contract_type": "Full-time",
+                "category": "Cloud Architecture",
+                "url": "https://aws.amazon.com/jobs/senior-architect"
+            }
+        ]
+
+
+# ============================
+#       GCP ADAPTER
+# ============================
+
+class GCPAdapter(BaseAdapter):
+    """
+    Adapter for fetching GCP job listings from public sources.
+    Returns sample data formatted to match existing CloudMatchAI job structure.
+    """
+    
+    async def fetch(self) -> list[dict[str, Any]]:
+        # This would use GCP job APIs with specific search parameters
+        # Sample data in the same format as used by AdzunaAdapter in jobs.match.yaml
+        return [
+            {
+                "name": "GCP Data Engineer - Principal",
+                "title": "Principal Data Engineer",
+                "company": "Google Cloud Platform",
+                "location": "Remote",
+                "description": "Design and implement data pipelines using GCP services. Experience with Dataproc, BigQuery, Dataflow, and Cloud Storage required.",
+                "salary_min": 130000,
+                "salary_max": 170000,
+                "contract_type": "Full-time",
+                "category": "Data Engineering",
+                "url": "https://cloud.google.com/jobs/principal-data-engineer"
+            }
+        ]
+
+
+# ============================
+#       AZURE ADAPTER
+# ============================
+
+class AzureAdapter(BaseAdapter):
+    """
+    Adapter for fetching Azure job listings from public sources.
+    Returns sample data formatted to match existing CloudMatchAI job structure.
+    """
+    
+    async def fetch(self) -> list[dict[str, Any]]:
+        # This would use Azure job APIs with specific search parameters
+        # Sample data in the same format as used by AdzunaAdapter in jobs.match.yaml
+        return [
+            {
+                "name": "Azure Cloud Architect - Lead",
+                "title": "Lead Cloud Architect",
+                "company": "Microsoft Azure",
+                "location": "Remote",
+                "description": "Design enterprise cloud solutions on Azure. Experience required with VMs, Storage, AD, and Azure networking services.",
+                "salary_min": 135000,
+                "salary_max": 175000,
+                "contract_type": "Full-time",
+                "category": "Cloud Architecture",
+                "url": "https://azure.microsoft.com/jobs/lead-architect"
+            }
+        ]
+
+
+# ============================
 #       ADAPTER REGISTRY
 # ============================
 
@@ -252,11 +339,18 @@ ADAPTERS = {
     "static": StaticAdapter,
     "groq": GroqAdapter,
     "adzuna": AdzunaAdapter,
+    "aws": AWSAdapter,
+    "gcp": GCPAdapter,
+    "azure": AzureAdapter,
 }
 
 
-def get_adapter(cfg: RootConfig):
-    cls = ADAPTERS.get(cfg.source.adapter)
-    if not cls:
-        raise ValueError(f"Unknown adapter: {cfg.source.adapter}")
-    return cls(cfg)
+def get_adapter(cfg: RootConfig) -> BaseAdapter:
+    """Factory function to create an adapter instance based on configuration."""
+    adapter_type = cfg.source.adapter
+    adapter_class = ADAPTERS.get(adapter_type)
+    
+    if not adapter_class:
+        raise ValueError(f"Unsupported adapter type: {adapter_type}")
+    
+    return adapter_class(cfg)

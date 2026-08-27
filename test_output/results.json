@@ -1,0 +1,35 @@
+[
+    {
+        "name": "AWS Cloud Solutions Architect - Senior",
+        "title": "Senior Cloud Solutions Architect",
+        "company": "Amazon Web Services",
+        "location": "Remote",
+        "description": "Design and implement scalable cloud solutions on AWS. Experience required with EC2, S3, Lambda, RDS, and IAM.",
+        "salary_min": 140000,
+        "salary_max": 180000,
+        "contract_type": "Full-time",
+        "category": "Cloud Architecture",
+        "url": "https://aws.amazon.com/jobs/senior-architect",
+        "_match_analysis": {
+            "scores": {
+                "skills_match": {
+                    "score": 1.0,
+                    "reasoning": "The candidate's listed skills 'AWS' and 'Cloud Architecture' perfectly align with the 'AWS Cloud Solutions Architect' role and its requirement for specific AWS services."
+                },
+                "experience_match": {
+                    "score": 0.8,
+                    "reasoning": "The candidate's 5 years of experience is a strong fit for a 'Senior Cloud Solutions Architect' role, although the 'Test experience' summary is generic."
+                },
+                "location_fit": {
+                    "score": 1.0,
+                    "reasoning": "The job is listed as 'Remote', which offers maximum flexibility and is a perfect location fit for any candidate."
+                },
+                "compensation_signal": {
+                    "score": 0.9,
+                    "reasoning": "The salary range of $140,000 - $180,000 is competitive and represents a strong positive compensation signal for a Senior Cloud Solutions Architect role."
+                }
+            },
+            "overall_score": 0.92
+        }
+    }
+]

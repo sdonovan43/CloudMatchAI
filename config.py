@@ -5,6 +5,14 @@ import yaml
 import os
 import re
 
+# Try to load .env file if it exists
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # If python-dotenv is not installed, continue without it
+    pass
+
 
 # ----------------------------
 #   Source block
