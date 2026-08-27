@@ -19,68 +19,21 @@ profile:
   criteria:
     skills_match: 0.35
     experience_match: 0.30
-    location_fit: 0.15
-    compensation_signal: 0.20
+    location_match: 0.15
+    salary_match: 0.20
 
 candidate:
-  summary: >
-    Principal Data Engineer & Cloud Data Architect specializing in modernizing enterprise
-    data ecosystems across energy, finance, and consulting. Designs and leads transformations
-    from legacy SQL Server environments into secure, scalable Azure and Microsoft Fabric
-    platforms that support analytics, governance, and AI-driven workloads. Works end-to-end
-    across architecture, migration, optimization, automation, and stakeholder alignment.
-    Targeting principal-level remote roles.
-  skills:
-    - "Azure SQL"
-    - "Azure Data Factory"
-    - "Azure Synapse"
-    - "ADLS Gen2"
-    - "Microsoft Fabric (Lakehouse, Warehouse, Pipelines, Notebooks, Semantic Models, OneLake)"
-    - "Azure OpenAI"
-    - "Vector search"
-    - "RAG architectures"
-    - "Dimensional modeling (Kimball)"
-    - "ELT/ETL architecture"
-    - "Data quality & lineage"
-    - "SSIS"
-    - "SSAS (tabular & multidimensional)"
-    - "SSRS"
-    - "Power BI (DAX, M, semantic modeling)"
-    - "Python"
-    - "Advanced T-SQL"
-    - "Query tuning"
-    - "Indexing"
-    - "Partitioning"
-    - "Observability"
-    - "High availability"
-    - "Capacity planning"
-    - "Security & compliance"
-    - "Copilot for SQL / Power BI / Fabric / Azure"
-    - "Automated documentation"
-    - "AI-assisted performance analysis"
-    - "Code generation"
-    - "Lakehouse architecture"
-    - "Semantic layer strategy"
-    - "Microsoft Purview"
-    - "RBAC"
-    - "Managed identities"
-    - "Data privacy & compliance"
-    - ".NET (C#, VB.NET, ASP.NET)"
-    - "REST APIs"
-    - "Application integration"
-    - "Git/TFS"
-    - "Agile/Scrum"
-    - "CI/CD fundamentals"
   experience_years: 20
   experience_summary: >
     Principal-level data engineering and cloud architecture career spanning energy, finance,
     and consulting sectors. Certifications: DP-900 (Microsoft Azure Data Fundamentals).
 
 llm:
-  provider: ollama
-  model: qwen3-coder:30b  # Using the specific model you requested
-  endpoint: "http://localhost:11434"  # Default Ollama endpoint
+  provider: "ollama"
+  model: "qwen3-coder:30b"  
+  endpoint: "http://localhost:11434"
+  api_key: ""  # Ollama doesn't use API keys, but schema requires this field
 
 storage:
-  path: output_jobs_ollama.json
-  min_score: 0.4
+  path: "output_jobs_ollama.json"
+  min_score: 0.5

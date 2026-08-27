@@ -26,7 +26,7 @@ class GroqAdapter(BaseAdapter):
     """
 
     async def fetch(self) -> list[dict[str, Any]]:
-        url = self.cfg.source.url  # correct field
+        url = self.cfg.source.url  # correct fieldare you still thinking?
         method = self.cfg.source.method.upper()
         headers = self.cfg.source.headers or {}
         params = self.cfg.source.params or {}

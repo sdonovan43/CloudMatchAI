@@ -353,4 +353,68 @@ MIT License
 In short:
     • Do whatever you want
     • Just don’t blame me if you aim this at tequila brands and start a bar fight
+Pull requests welcome — just keep it sharp.
+
+---
+
+## 📜 License
+
+```yaml
+MIT License
+
+    • Free to use
+    • Free to modify
+    • Free to distribute
+    • No warranty
+    • No liability
+
+In short:
+    • Do whatever you want
+    • Just don't blame me if you aim this at tequila brands and start a bar fight
+```
+
+## 🧠 Key Features
+
+- **Modular Architecture**: Clean separation of concerns with adapters for data fetching and LLM scoring
+- **YAML Configuration**: All settings defined in human-readable YAML files
+- **Extensible Design**: Easy to add new adapters, scoring profiles, or modify behavior
+- **LLM-Powered Scoring**: Uses Gemini/OpenAI/OLLAMA models for intelligent decision-making
+- **Multi-Source Support**: Works with static data, REST APIs, and dynamic web scraping
+- **Comprehensive Output**: Provides scores, breakdowns, and explanations
+- **Lightweight**: Minimal dependencies, focused on core functionality
+
+## 🚀 Usage Examples
+
+### Basic Use
+```bash
+python cli.py test.match.yaml
+```
+
+### With Documentation Generation
+```bash
+python cli.py test.match.yaml --publish
+```
+
+### Custom Scoring Profiles
+Create new `.yaml` files for different use cases:
+- `jobs.match.yaml` - Job listing scoring
+- `clouds.match.yaml` - Cloud provider scoring 
+- `test_ollama.yaml` - Example using local Ollama models
+- `jobs_ollama.yaml` - Job scoring with local Ollama models
+
+## 🔄 System Workflow
+
+1. **Load Configuration** - Parse YAML profile with criteria and settings
+2. **Fetch Data** - Retrieve entities via configured adapter (static, REST, Playwright)
+3. **Deduplicate** - Remove duplicate entities to ensure clean results  
+4. **Score Items** - Apply weighted criteria using LLM evaluation
+5. **Store Results** - Save output to specified file with optional filtering
+6. **Publish** - Generate static site files for web viewing (optional)
+
+## 🧪 Testing
+
+The system includes comprehensive tests:
+- Unit tests in `test_scorer.py`
+- Integration testing with various data sources
+- End-to-end pipeline validation
 ```
